@@ -52,6 +52,14 @@ public class UserCheckFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("{\"error\": \"Unauthorized\", \"message\": \"" + failed.getMessage() + "\"}");
+    }
+
+    @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         UserDetailsInformation information = (UserDetailsInformation) authResult.getPrincipal();
         String username = information.getInformation().getUsername();
@@ -64,6 +72,7 @@ public class UserCheckFilter extends UsernamePasswordAuthenticationFilter {
             response.addHeader("Authorization","Bearer "+jwtToken);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("{\"token\": \"" + jwtToken + "\"}");
 
         }
 
