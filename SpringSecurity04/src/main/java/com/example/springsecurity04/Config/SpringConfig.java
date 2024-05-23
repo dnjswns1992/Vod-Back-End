@@ -53,6 +53,6 @@ public class SpringConfig {
     }
     @Bean
     public CommentManager commentManager(){
-      return new CommentManager(postRepository,commentRepository);
+      return new CommentManager(postRepository,commentRepository,commonRepository);
     }
 }

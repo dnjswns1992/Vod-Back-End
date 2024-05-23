@@ -47,7 +47,7 @@ public abstract class AbstractOauth2Service {
 
             if (providerUser.provider().equals("google")) {
 
-                Oauth2Entity oauth2Entity = Oauth2Entity.builder().nickName(providerUser.nickName())
+                Oauth2Entity oauth2Entity = Oauth2Entity.builder().nickName(providerUser.email())
                         .email(providerUser.email()).provider(providerUser.provider()).role("ROLE_USER")
                         .Image(ProfileImage.profileImage).build();
 

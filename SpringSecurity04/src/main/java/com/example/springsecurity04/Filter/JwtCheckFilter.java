@@ -56,6 +56,7 @@ public class JwtCheckFilter extends OncePerRequestFilter {
         }
 
         if(authorization == null || !authorization.startsWith("Bearer ")) {
+            log.info("??");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }

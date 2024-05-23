@@ -13,5 +13,6 @@ public class PostDto {
     private String title;
     private String username;
     private int postHit;
-    private LocalDate createAt;
+    private LocalDate createTime;
+    private String nickname;
 }

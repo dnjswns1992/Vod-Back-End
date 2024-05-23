@@ -29,6 +29,7 @@ public class PostManager {
 
         transfer.setUsername(commonEntity.getUsername());
         transfer.setCommonEntity(commonEntity);
+        transfer.setNickname(commonEntity.getNickname());
 
         postRepository.save(transfer);
 

@@ -36,6 +36,7 @@ public class PostController {
     @GetMapping("/user/bring/post")
     public ResponseEntity bringPost() {
         List<PostEntity> postEntities = service.bringPost();
+
         return ResponseEntity.ok(postEntities);
     }
     @GetMapping("user/postRemove/{postId}")

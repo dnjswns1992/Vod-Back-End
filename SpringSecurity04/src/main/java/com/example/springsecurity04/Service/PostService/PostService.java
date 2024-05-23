@@ -31,6 +31,12 @@ public class PostService {
     }
     public List<PostEntity> bringPost(){
         List<PostEntity> postAll = postRepository.findAll();
+
+        for(PostEntity post : postAll) {
+            int commentCount = commentRepository.countByPostEntity(post);
+            post.setCommentCount(commentCount);
+        }
+
         return postAll;
     }
 

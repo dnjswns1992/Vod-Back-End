@@ -28,8 +28,10 @@ public class PostEntity {
     private String username;
     private String title;
     private String content;
+    private String nickname;
     @CreationTimestamp
     private LocalDate createTime;
+    private int commentCount;
     private int reportCount;
     @Lob
     private byte[] user_Profile;

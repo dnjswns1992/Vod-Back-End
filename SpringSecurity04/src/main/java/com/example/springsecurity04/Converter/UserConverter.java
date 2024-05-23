@@ -2,6 +2,9 @@ package com.example.springsecurity04.Converter;
 
 
 import com.example.springsecurity04.Dto.UserDto;
+import com.example.springsecurity04.Error.DuplicateEmailException;
+import com.example.springsecurity04.Error.DuplicateNickNameException;
+import com.example.springsecurity04.Error.DuplicateUsernameException;
 import com.example.springsecurity04.Oauth2.ProviderUser.ProviderUser;
 import com.example.springsecurity04.Repository.CommonRepository;
 import com.example.springsecurity04.Repository.Oauth2UserRepository;
@@ -30,12 +33,18 @@ public class UserConverter {
 
         TransferModelMapper<UserDto,UserEntity> modelMapper = new TransferModelMapper<>();
 
+        if(repository.existsByNickName(userDto.getNickname())) throw new DuplicateNickNameException("NickName Duplicate :");
+
+        if(repository.existsByEmail(userDto.getEmail())) throw new DuplicateEmailException("Email Duplicate");
+
+        if(repository.existsByUsername(userDto.getUsername())) throw new DuplicateUsernameException("UserName Duplicate");
+
         Optional<UserEntity> userEntityByUsername = repository.findUserEntityByUsername(userDto.getUsername());
 
 
         if(userEntityByUsername.isEmpty()) {
             userDto.setRole("ROLE_USER");
-            userDto.setNickname("익명의 유저");
+            userDto.setNickname(userDto.getNickname());
             userDto.setProvider("FormLogin");
             userDto.setPassword(encoder.encode(userDto.getPassword()));
 
