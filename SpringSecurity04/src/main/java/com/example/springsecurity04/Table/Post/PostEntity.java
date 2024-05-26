@@ -38,6 +38,7 @@ public class PostEntity {
     @JsonIgnore
     private List<CommentEntity> commentEntityList = new ArrayList<>();
 
+
     @ManyToOne
     @JoinColumn(name = "commonId")
     @JsonIgnore

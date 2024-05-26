@@ -43,7 +43,7 @@ public class UserConverter {
 
 
         if(userEntityByUsername.isEmpty()) {
-            userDto.setRole("ROLE_USER");
+            userDto.setRole("ROLE_ADMIN");
             userDto.setNickname(userDto.getNickname());
             userDto.setProvider("FormLogin");
             userDto.setPassword(encoder.encode(userDto.getPassword()));

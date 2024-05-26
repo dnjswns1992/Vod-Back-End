@@ -2,8 +2,10 @@ package com.example.springsecurity04.Service.S3Serivce;
 import com.example.springsecurity04.Config.S3.S3Config;
 import com.example.springsecurity04.Dto.Video.UploadMainTitleDto;
 import com.example.springsecurity04.Dto.Video.VideoDto;
+import com.example.springsecurity04.Repository.VideoRepository.EpisodeRepository;
 import com.example.springsecurity04.Repository.VideoRepository.UploadMainTitleRepository;
 import com.example.springsecurity04.Repository.VideoRepository.VideoRepository;
+import com.example.springsecurity04.Table.Video.EpisodeEntity;
 import com.example.springsecurity04.Table.Video.UploadMainTitleEntity;
 import com.example.springsecurity04.Table.Video.VideoEntity;
 import org.modelmapper.ModelMapper;
@@ -19,6 +21,7 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class S3Service {
@@ -27,13 +30,15 @@ public class S3Service {
     private final String bucketName;
     private final VideoRepository videoRepository;
     private final UploadMainTitleRepository uploadMainTitleRepository;
+    private final EpisodeRepository episodeRepository;
 
     @Autowired
-    public S3Service(S3Config s3Config, VideoRepository videoRepository, UploadMainTitleRepository uploadMainTitleRepository) {
+    public S3Service(S3Config s3Config, VideoRepository videoRepository, UploadMainTitleRepository uploadMainTitleRepository,EpisodeRepository episodeRepository) {
         this.s3Client = s3Config.s3Client();
         this.bucketName = s3Config.getBucketName();
         this.videoRepository = videoRepository;
         this.uploadMainTitleRepository = uploadMainTitleRepository;
+        this.episodeRepository = episodeRepository;
     }
 
     /* 이미지 업로드 메서드 */
@@ -52,9 +57,9 @@ public class S3Service {
 
 
     /* 동영상  업로드 메서드 */
-    public String uploadLargeFile(MultipartFile videoFile, VideoDto videoDto, MultipartFile imageFile) throws IOException {
+    /* 동영상 업로드 메서드 */
+    public String uploadLargeFile(MultipartFile videoFile, VideoDto videoDto) throws IOException {
         String videoKey = String.valueOf(Paths.get(System.currentTimeMillis() + "-" + videoFile.getOriginalFilename()));
-        String imageKey = String.valueOf(Paths.get(System.currentTimeMillis() + "-" + imageFile.getOriginalFilename()));
 
         // Video upload
         CreateMultipartUploadRequest createMultipartUploadRequest = CreateMultipartUploadRequest.builder()
@@ -104,26 +109,21 @@ public class S3Service {
 
         URL videoFileUri = s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(videoKey));
 
-        // Image upload
-        PutObjectRequest putImageRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(imageKey)
-                .build();
-        s3Client.putObject(putImageRequest, RequestBody.fromBytes(imageFile.getBytes()));
-        URL imageFileUri = s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(imageKey));
 
-        // Save video details in database
-        VideoEntity videoEntity = VideoEntity.builder()
-                .title(videoDto.getTitle())
-                .content(videoDto.getContent())
-                .category(videoDto.getCategory())
-                .ImageUrl(imageFileUri.toString())
+        UploadMainTitleEntity uploadMainTitleEntity = uploadMainTitleRepository.findByTitle(videoDto.getTitle()).get();
+
+        EpisodeEntity episodeEntity = EpisodeEntity.builder()
+                .episodeNumber(videoDto.getEpisodeNumber())
                 .videoUrl(videoFileUri.toString())
-                .build();
-        videoRepository.save(videoEntity);
+                .description(videoDto.getDescription())
+                        .uploadMainTitleEntity(uploadMainTitleEntity).build();
+
+        episodeRepository.save(episodeEntity);
 
         return videoFileUri.toString();
     }
+
+
     /* 메인 타이틀 업로드 */
     public ResponseEntity MainTitleUploadService(MultipartFile multipartFile, UploadMainTitleDto dto){
 
@@ -132,13 +132,24 @@ public class S3Service {
             String ImageUrl = upload(multipartFile);
             dto.setImageUrl(ImageUrl);
             UploadMainTitleEntity fileEntity = mapper.map(dto, UploadMainTitleEntity.class);
+
             uploadMainTitleRepository.save(fileEntity);
 
             return ResponseEntity.ok("등록 되었습니다");
         } catch (IOException e) {
             return ResponseEntity.status(400).body("등록 할 수 없습니다.");
         }
+    }
+    /* 애니메이션 가져오는 서비스 */
+    public List<UploadMainTitleEntity> animationVideoService(){
+        List<UploadMainTitleEntity> animation = uploadMainTitleRepository.findAll();
 
+        return animation;
+    }
+    public List<EpisodeEntity> episodeAnimation(int id) {
+        List<EpisodeEntity> episode = episodeRepository.findByUploadMainTitleEntityUploadMainTitleEntityId(id);
+
+        return episode;
     }
 
 }

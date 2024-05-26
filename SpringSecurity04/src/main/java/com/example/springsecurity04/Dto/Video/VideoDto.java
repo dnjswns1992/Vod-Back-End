@@ -9,8 +9,8 @@ public class VideoDto {
 
     private int VideoId;
     private String title;
-    private String content;
-    private String category;
+    private String episodeNumber;
     private URL ImageUrl;
     private URL VideoUrl;
+    private String description;
 }

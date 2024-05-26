@@ -1,11 +1,12 @@
 package com.example.springsecurity04.Table.Video;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
+import net.minidev.json.annotate.JsonIgnore;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -19,5 +20,8 @@ public class UploadMainTitleEntity {
     private String category;
     private String ImageUrl;
     private String genre;
+    @OneToMany(mappedBy = "uploadMainTitleEntity")
+    @JsonManagedReference
+    private List<EpisodeEntity> episodeEntityList = new ArrayList<>();
 
 }

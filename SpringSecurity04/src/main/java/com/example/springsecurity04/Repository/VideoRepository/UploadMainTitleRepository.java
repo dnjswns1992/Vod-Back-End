@@ -10,5 +10,10 @@ import java.util.Optional;
 public interface UploadMainTitleRepository extends JpaRepository<UploadMainTitleEntity,Integer> {
 
 Optional<UploadMainTitleEntity> findByTitleContaining(String title);
+Optional<UploadMainTitleEntity> findByTitle(String title);
+
+Optional<UploadMainTitleEntity> findByGenre(String Genre);
+
+
 
 }
