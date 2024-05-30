@@ -9,7 +9,9 @@ public class UploadMainTitleDto {
 
     private String title;
     private String season;
+    private String mainTitleDescription;
     private String category;
+    private String MainTitleImageUrl;
     private String ImageUrl;
     private String genre;
 

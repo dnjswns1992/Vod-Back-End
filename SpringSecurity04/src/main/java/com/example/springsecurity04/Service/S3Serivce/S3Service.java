@@ -1,13 +1,15 @@
 package com.example.springsecurity04.Service.S3Serivce;
 import com.example.springsecurity04.Config.S3.S3Config;
+import com.example.springsecurity04.Dto.Video.Animation.AnimationEpisodeEntityDto;
 import com.example.springsecurity04.Dto.Video.UploadMainTitleDto;
 import com.example.springsecurity04.Dto.Video.VideoDto;
-import com.example.springsecurity04.Repository.VideoRepository.EpisodeRepository;
+import com.example.springsecurity04.Handler.WebSocketHandler.ProgressWebSocketHandler;
+import com.example.springsecurity04.Repository.EpisodeRepository.AnimationEpisodeEntityRepository;
+import com.example.springsecurity04.Repository.EpisodeRepository.DramaEpisodeRepository;
+import com.example.springsecurity04.Table.EpsidoeEntity.AnimationEpisodeEntity;
 import com.example.springsecurity04.Repository.VideoRepository.UploadMainTitleRepository;
-import com.example.springsecurity04.Repository.VideoRepository.VideoRepository;
-import com.example.springsecurity04.Table.Video.EpisodeEntity;
+import com.example.springsecurity04.Table.EpsidoeEntity.DramaEpisodeEntity;
 import com.example.springsecurity04.Table.Video.UploadMainTitleEntity;
-import com.example.springsecurity04.Table.Video.VideoEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,24 +23,27 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class S3Service {
 
     private final S3Client s3Client;
     private final String bucketName;
-    private final VideoRepository videoRepository;
     private final UploadMainTitleRepository uploadMainTitleRepository;
-    private final EpisodeRepository episodeRepository;
+    private final AnimationEpisodeEntityRepository animationEpisodeEntityRepository;
+    private final DramaEpisodeRepository dramaEpisodeRepository;
+    private final ProgressWebSocketHandler webSocketHandler;
 
     @Autowired
-    public S3Service(S3Config s3Config, VideoRepository videoRepository, UploadMainTitleRepository uploadMainTitleRepository,EpisodeRepository episodeRepository) {
+    public S3Service(S3Config s3Config, UploadMainTitleRepository uploadMainTitleRepository,
+                     AnimationEpisodeEntityRepository animationEpisodeEntityRepository,
+                     DramaEpisodeRepository dramaEpisodeRepository,ProgressWebSocketHandler webSocketHandler) {
         this.s3Client = s3Config.s3Client();
         this.bucketName = s3Config.getBucketName();
-        this.videoRepository = videoRepository;
         this.uploadMainTitleRepository = uploadMainTitleRepository;
-        this.episodeRepository = episodeRepository;
+        this.animationEpisodeEntityRepository = animationEpisodeEntityRepository;
+        this.dramaEpisodeRepository = dramaEpisodeRepository;
+        this.webSocketHandler = webSocketHandler;
     }
 
     /* 이미지 업로드 메서드 */
@@ -57,8 +62,8 @@ public class S3Service {
 
 
     /* 동영상  업로드 메서드 */
-    /* 동영상 업로드 메서드 */
-    public String uploadLargeFile(MultipartFile videoFile, VideoDto videoDto) throws IOException {
+
+    public String uploadLargeFile(MultipartFile videoFile, VideoDto videoDto,MultipartFile imageFile,String sessionId) throws IOException {
         String videoKey = String.valueOf(Paths.get(System.currentTimeMillis() + "-" + videoFile.getOriginalFilename()));
 
         // Video upload
@@ -92,6 +97,10 @@ public class S3Service {
                     .eTag(uploadPartResponse.eTag())
                     .build());
 
+            int progress = (int) (((double) (i + partBytes.length) / fileBytes.length) * 100);
+            webSocketHandler.sendMessage(sessionId, progress);
+
+
             partNumber++;
         }
 
@@ -107,30 +116,50 @@ public class S3Service {
                 .build();
         s3Client.completeMultipartUpload(completeMultipartUploadRequest);
 
-        URL videoFileUri = s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(videoKey));
+         String videoFileUri = String.valueOf(s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(videoKey)));
+        String  imageFileUri = upload(imageFile);
 
 
-        UploadMainTitleEntity uploadMainTitleEntity = uploadMainTitleRepository.findByTitle(videoDto.getTitle()).get();
+        UploadMainTitleEntity uploadMainTitleEntity = uploadMainTitleRepository.findByTitleContainingAndGenre(videoDto.getTitle(),videoDto.getGenre()).get();
 
-        EpisodeEntity episodeEntity = EpisodeEntity.builder()
-                .episodeNumber(videoDto.getEpisodeNumber())
-                .videoUrl(videoFileUri.toString())
-                .description(videoDto.getDescription())
-                        .uploadMainTitleEntity(uploadMainTitleEntity).build();
+        if(uploadMainTitleEntity.getGenre().equals("애니")) {
+            AnimationEpisodeEntity animationEpisode = AnimationEpisodeEntity.builder()
+                    .episodeNumber(videoDto.getEpisodeNumber())
+                    .imageUrl(imageFileUri)
+                    .description(videoDto.getDescription())
+                    .genre(videoDto.getGenre())
+                    .videoUrl(videoFileUri)
+                    .entity(uploadMainTitleEntity).build();
 
-        episodeRepository.save(episodeEntity);
+            animationEpisodeEntityRepository.save(animationEpisode);
+
+            ///이거 수정해야 함. 2024 5 30
+        }else if(uploadMainTitleEntity.getGenre().equals("영화")) {
+
+            DramaEpisodeEntity dramaEpisodeEntity = DramaEpisodeEntity.builder()
+                    .episodeNumber(videoDto.getEpisodeNumber())
+                    .description(videoDto.getDescription())
+                    .genre(videoDto.getGenre())
+                    .ImageUrl(imageFileUri)
+                    .videoUrl(videoFileUri)
+                    .build();
+
+            dramaEpisodeRepository.save(dramaEpisodeEntity);
+        }
 
         return videoFileUri.toString();
     }
 
 
     /* 메인 타이틀 업로드 */
-    public ResponseEntity MainTitleUploadService(MultipartFile multipartFile, UploadMainTitleDto dto){
+    public ResponseEntity MainTitleUploadService(MultipartFile multipartFile, UploadMainTitleDto dto,MultipartFile mainTitleImage){
 
         ModelMapper mapper = new ModelMapper();
         try {
             String ImageUrl = upload(multipartFile);
+            String mainTitle = upload(mainTitleImage);
             dto.setImageUrl(ImageUrl);
+            dto.setMainTitleImageUrl(mainTitle);
             UploadMainTitleEntity fileEntity = mapper.map(dto, UploadMainTitleEntity.class);
 
             uploadMainTitleRepository.save(fileEntity);
@@ -146,10 +175,16 @@ public class S3Service {
 
         return animation;
     }
-    public List<EpisodeEntity> episodeAnimation(int id) {
-        List<EpisodeEntity> episode = episodeRepository.findByUploadMainTitleEntityUploadMainTitleEntityId(id);
+    public AnimationEpisodeEntityDto episodeAnimation(int id) {
+        List<AnimationEpisodeEntity> episode = animationEpisodeEntityRepository.findByUploadMainTitleEntityUploadMainTitleEntityId(id);
+        UploadMainTitleEntity uploadMainTitleEntity = uploadMainTitleRepository.findById(id).get();
 
-        return episode;
+        AnimationEpisodeEntityDto animationEpisodeEntityDto = new AnimationEpisodeEntityDto();
+        animationEpisodeEntityDto.setEpisode(episode);
+        animationEpisodeEntityDto.setUploadMainTitleEntity(uploadMainTitleEntity);
+
+
+        return animationEpisodeEntityDto;
     }
 
 }

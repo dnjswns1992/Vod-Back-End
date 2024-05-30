@@ -2,34 +2,40 @@ package com.example.springsecurity04.Converter;
 
 
 import com.example.springsecurity04.Dto.UserDto;
-import com.example.springsecurity04.Error.DuplicateEmailException;
-import com.example.springsecurity04.Error.DuplicateNickNameException;
-import com.example.springsecurity04.Error.DuplicateUsernameException;
+import com.example.springsecurity04.Handler.ErrorHandler.DuplicateEmailException;
+import com.example.springsecurity04.Handler.ErrorHandler.DuplicateNickNameException;
+import com.example.springsecurity04.Handler.ErrorHandler.DuplicateUsernameException;
 import com.example.springsecurity04.Oauth2.ProviderUser.ProviderUser;
 import com.example.springsecurity04.Repository.CommonRepository;
 import com.example.springsecurity04.Repository.Oauth2UserRepository;
 import com.example.springsecurity04.Repository.UserRepository;
+import com.example.springsecurity04.Service.S3Serivce.S3Service;
 import com.example.springsecurity04.Table.Common.CommonEntity;
 import com.example.springsecurity04.Table.UserAccount.Oauth2Entity;
 import com.example.springsecurity04.Table.UserAccount.UserEntity;
 import com.example.springsecurity04.UserAccount.TransferModelMapper;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @Data
+@Slf4j
 public class UserConverter {
 
     private final PasswordEncoder encoder;
     private final UserRepository repository;
     private final Oauth2UserRepository oauth2UserRepository;
     private final CommonRepository commonRepository;
+    private final S3Service s3Service;
 
 
 
-    public boolean FormLoginUserRegister(UserDto userDto, HttpServletRequest servletRequest) {
+
+    public boolean FormLoginUserRegister(UserDto userDto, HttpServletRequest servletRequest, MultipartFile multipartFile) {
 
         TransferModelMapper<UserDto,UserEntity> modelMapper = new TransferModelMapper<>();
 
@@ -43,22 +49,32 @@ public class UserConverter {
 
 
         if(userEntityByUsername.isEmpty()) {
-            userDto.setRole("ROLE_ADMIN");
-            userDto.setNickname(userDto.getNickname());
-            userDto.setProvider("FormLogin");
-            userDto.setPassword(encoder.encode(userDto.getPassword()));
 
-            UserEntity entity = modelMapper.getTransfer(userDto, UserEntity.class);
-            entity.setEmail(userDto.getEmail() == null ? "이메일 없음" : userDto.getEmail());
+          try {
 
-            repository.save(entity);
 
-            CommonEntity commonEntity = new CommonEntity(entity);
-            entity.setUserIp(servletRequest.getRemoteAddr());
+              userDto.setRole("ROLE_ADMIN");
+              userDto.setNickname(userDto.getNickname());
+              userDto.setProvider("FormLogin");
+              userDto.setPassword(encoder.encode(userDto.getPassword()));
 
-            commonRepository.save(commonEntity);
+              String upload = s3Service.upload(multipartFile);
 
-            return true;
+              UserEntity entity = modelMapper.getTransfer(userDto, UserEntity.class);
+              entity.setEmail(userDto.getEmail() == null ? "이메일 없음" : userDto.getEmail());
+              entity.setImageUrl(upload);
+              repository.save(entity);
+
+              CommonEntity commonEntity = new CommonEntity(entity);
+              entity.setUserIp(servletRequest.getRemoteAddr());
+
+              commonRepository.save(commonEntity);
+
+              return true;
+          }catch (Exception e) {
+              log.info("error = {} ",e.getMessage());
+
+          }
         }
         return false;
     }

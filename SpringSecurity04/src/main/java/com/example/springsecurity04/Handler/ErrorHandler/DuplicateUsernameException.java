@@ -1,4 +1,4 @@
-package com.example.springsecurity04.Error;
+package com.example.springsecurity04.Handler.ErrorHandler;
 
 public class DuplicateUsernameException extends RuntimeException{
 

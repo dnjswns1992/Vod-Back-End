@@ -1,8 +1,8 @@
 package com.example.springsecurity04.Controller.ControllerAdvice;
 
-import com.example.springsecurity04.Error.DuplicateEmailException;
-import com.example.springsecurity04.Error.DuplicateNickNameException;
-import com.example.springsecurity04.Error.DuplicateUsernameException;
+import com.example.springsecurity04.Handler.ErrorHandler.DuplicateEmailException;
+import com.example.springsecurity04.Handler.ErrorHandler.DuplicateNickNameException;
+import com.example.springsecurity04.Handler.ErrorHandler.DuplicateUsernameException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

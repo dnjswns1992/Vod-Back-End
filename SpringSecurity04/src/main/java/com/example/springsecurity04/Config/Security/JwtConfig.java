@@ -55,7 +55,8 @@ public class JwtConfig {
         security.addFilterBefore(new UserCheckFilter(configuration.getAuthenticationManager(), repository), UsernamePasswordAuthenticationFilter.class);
         security.addFilterBefore(new JwtCheckFilter(repository, oauth2UserRepository, commonRepository), UsernamePasswordAuthenticationFilter.class);
 
-        security.authorizeHttpRequests(request -> request.antMatchers("/register", "/check-username", "/check-email", "/api/**", "/login","/user/**").permitAll()
+        security.authorizeHttpRequests(request -> request.antMatchers("/register", "/check-username",
+                        "/check-email", "/api/**", "/login","/user/**","/error","/ws/**").permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/manager/**").hasAnyRole("ADMIN", "MANAGER")
                 .antMatchers("/authenticated/**").hasAnyRole("ADMIN", "MANAGER", "USER")
@@ -86,6 +87,6 @@ public class JwtConfig {
 
     @Bean
     WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().antMatchers("static/css/**");
+        return web -> web.ignoring().antMatchers("static/css/**"," /ws/upload-progress");
     }
 }

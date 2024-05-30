@@ -11,12 +11,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequiredArgsConstructor
 @Slf4j
+
 public class LoginController {
 
 
@@ -25,28 +27,13 @@ public class LoginController {
 
     @PostMapping("/register")
     @ResponseBody
-    public ResponseEntity<?> userRegister(@RequestBody UserDto dto, HttpServletRequest servletRequest){
-        boolean join = service.join(dto,servletRequest);
-        if(join) return ResponseEntity.status(HttpStatus.OK).body("회원가입이 완료 되었습니다.");
-        else return ResponseEntity.status(HttpStatus.CONFLICT).body("사용중인 아이디 입니다.");
+    public ResponseEntity<?> userRegister(@RequestPart("dto") UserDto dto
+                                          ,@RequestPart("image")MultipartFile multipartFile,
+                                          HttpServletRequest servletRequest){
+        boolean join = service.join(dto, servletRequest, multipartFile);
+        if(join) return ResponseEntity.status(200).body("회원가입 완료");
+        else return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 아이디 입니다.");
+
     }
-    @GetMapping("/login")
-    public String login(){
-        return "/logim";
-    }
-
-    @GetMapping("/user/test1")
-    @ResponseBody
-    public String test01(Authentication authentication){
-        log.info("들어오는지 테스트~~~!!");
-        UserDetailsInformation principal = (UserDetailsInformation) authentication.getPrincipal();
-
-        log.info("유저 정보 이름 = {}",principal.getInformation().getUsername());
-        log.info("유저 권한 = {} ",principal.getInformation().getRole());
-        log.info("유저 닉네임 = {}",principal.getInformation().getNickname());
-        return "시발 왜 안드럼ㄴ언밍ㅁㄴ마ㅣ엄이낭ㅁ";
-    }
-
-
 
 }

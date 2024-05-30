@@ -11,6 +11,7 @@ public interface UploadMainTitleRepository extends JpaRepository<UploadMainTitle
 
 Optional<UploadMainTitleEntity> findByTitleContaining(String title);
 Optional<UploadMainTitleEntity> findByTitle(String title);
+Optional<UploadMainTitleEntity> findByTitleContainingAndGenre(String title,String genre);
 
 Optional<UploadMainTitleEntity> findByGenre(String Genre);
 

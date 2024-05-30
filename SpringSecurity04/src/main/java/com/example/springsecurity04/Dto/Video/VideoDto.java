@@ -13,4 +13,6 @@ public class VideoDto {
     private URL ImageUrl;
     private URL VideoUrl;
     private String description;
+    private String genre;
+    ;
 }

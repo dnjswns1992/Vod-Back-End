@@ -34,96 +34,68 @@ public class JwtCheckFilter extends OncePerRequestFilter {
     private final Oauth2UserRepository oauth2UserRepository;
     private final CommonRepository commonRepository;
 
-
-
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-
         String authorization = null;
         UserInformation userInformation = null;
         UserDetailsInformation detailsInformation = null;
 
         authorization = request.getHeader("Authorization");
+        logger.debug("Request URI: " + request.getRequestURI());
 
 
-
-
-        if(!request.getRequestURI().startsWith("/authenticated/") && !request.getRequestURI().startsWith("/admin/")) {
-            filterChain.doFilter(request,response);
+        if (!request.getRequestURI().startsWith("/authenticated/") && !request.getRequestURI().startsWith("/admin/")) {
+            filterChain.doFilter(request, response);
             return;
         }
 
-        if(authorization == null || !authorization.startsWith("Bearer ")) {
-            log.info("??");
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
+            log.info("Authorization header is missing or doesn't start with 'Bearer '");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
+
         try {
             String token = authorization.split(" ")[1];
-
             Claims username = JsonWebToken.getToken(token);
-
             String provider = username.get("provider", String.class);
 
-            if(provider.equals("FormLogin")) {
-
+            if (provider.equals("FormLogin")) {
                 String findUsername = username.get("username", String.class);
-
-
                 Optional<CommonEntity> byUsername = commonRepository.findByUsername(findUsername);
 
-
-
-
-                if(byUsername.isEmpty()) {
+                if (byUsername.isEmpty()) {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     return;
                 }
 
+                userInformation = FormLoginOauthCombine.CommonCombine(byUsername.get());
 
-               userInformation = FormLoginOauthCombine.CommonCombine(byUsername.get());
-
-
-            }else {
+            } else {
                 String oauth2Username = username.get("username", String.class);
-
                 Optional<Oauth2Entity> oauth2User = oauth2UserRepository.findByEmail(oauth2Username);
 
-                if(oauth2User.isEmpty()) {
+                if (oauth2User.isEmpty()) {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     return;
                 }
 
-
-
-               userInformation = FormLoginOauthCombine.Oauth2Combine(oauth2User.get());
-
-
+                userInformation = FormLoginOauthCombine.Oauth2Combine(oauth2User.get());
             }
 
             UserDetailsInformation userDetailsInformation = new UserDetailsInformation(userInformation);
-
-
-
-
-
-
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                    new UsernamePasswordAuthenticationToken(userDetailsInformation,userDetailsInformation.getPassword(),userDetailsInformation.getAuthorities());
+                    new UsernamePasswordAuthenticationToken(userDetailsInformation, userDetailsInformation.getPassword(), userDetailsInformation.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+            filterChain.doFilter(request, response);
 
-            filterChain.doFilter(request,response);
+        } catch (Exception e) {
+            log.info("Exception in JWT Filter: {}", e.getMessage());
 
-        }catch (Exception e) {
-            log.info("스택 트레이스 = {}",e.getMessage());
-
-            if(e instanceof io.jsonwebtoken.security.SignatureException) {
+            if (e instanceof io.jsonwebtoken.security.SignatureException) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            }
-            if(e instanceof Exception) {
+            } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
         }

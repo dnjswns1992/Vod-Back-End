@@ -28,6 +28,7 @@ public class UserEntity {
     private String provider;
     private String email;
     private String userIp;
+    private String imageUrl;
 
     @OneToOne(mappedBy = "userEntity" , cascade = CascadeType.ALL) //내 주인님
     @JsonIgnore
@@ -35,12 +36,13 @@ public class UserEntity {
 
 
     @Builder
-    public UserEntity(String nickName, String username, String password, String role, String provider, String email) {
+    public UserEntity(String nickName, String username, String password, String role, String provider, String email,String imageUrl) {
         this.nickName = nickName;
         this.username = username;
         this.password = password;
         this.role = role;
         this.provider = provider;
         this.email = email;
+        this.imageUrl = imageUrl;
     }
 }

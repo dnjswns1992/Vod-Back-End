@@ -1,8 +1,10 @@
 package com.example.springsecurity04.Controller.S3Controller;
 
+import com.example.springsecurity04.Dto.Video.Animation.AnimationEpisodeEntityDto;
 import com.example.springsecurity04.Dto.Video.UploadMainTitleDto;
 import com.example.springsecurity04.Dto.Video.VideoDto;
 import com.example.springsecurity04.Service.S3Serivce.S3Service;
+import com.example.springsecurity04.Table.EpsidoeEntity.AnimationEpisodeEntity;
 import com.example.springsecurity04.Table.Video.UploadMainTitleEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +36,11 @@ public class FileController {
     @PostMapping("/api/file/video/upload")
     public ResponseEntity<String> uploadVideo(
             @RequestPart("video") MultipartFile videoFile,
-            @RequestPart("videoDto") VideoDto videoDto) {
+            @RequestPart("videoDto") VideoDto videoDto,
+            @RequestPart("Image") MultipartFile imageFile,
+            @RequestHeader("Session-Id")String sessionId) {
         try {
-            String key = s3Service.uploadLargeFile(videoFile, videoDto);
+            String key = s3Service.uploadLargeFile(videoFile, videoDto,imageFile,sessionId);
             return ResponseEntity.ok("Video upload success: " + key);
         } catch (IOException e) {
             return ResponseEntity.status(500).body("Video upload failed: " + e.getMessage());
@@ -45,9 +49,10 @@ public class FileController {
     /* 메인 타이틀 등록 */
     @PostMapping("/api/mainTitle/upload")
     public ResponseEntity<String> uploadMainTitle(@RequestPart("Image") MultipartFile multipartFile,
-                                                  @RequestPart("mainTitleDto")UploadMainTitleDto dto) {
+                                                  @RequestPart("mainTitleDto")UploadMainTitleDto dto,
+                                                  @RequestPart("mainTitleImage") MultipartFile mainTitleImage) {
 
-        ResponseEntity responseEntity = s3Service.MainTitleUploadService(multipartFile, dto);
+        ResponseEntity responseEntity = s3Service.MainTitleUploadService(multipartFile, dto,mainTitleImage);
 
         return responseEntity;
     }
@@ -61,7 +66,8 @@ public class FileController {
     }
     @GetMapping("/api/animation/episode/{id}")
     public ResponseEntity animationEpisode(@PathVariable int id) {
-        return ResponseEntity.status(200).body(s3Service.episodeAnimation(id));
+        AnimationEpisodeEntityDto animationEpisodeEntityDto = s3Service.episodeAnimation(id);
+        return ResponseEntity.status(200).body(animationEpisodeEntityDto);
     }
 
 }
