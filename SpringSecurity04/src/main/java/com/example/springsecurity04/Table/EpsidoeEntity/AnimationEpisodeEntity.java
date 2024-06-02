@@ -38,13 +38,14 @@ public class AnimationEpisodeEntity {
 
     @Builder
     public AnimationEpisodeEntity(String imageUrl,String description,String episodeNumber,
-                                  String genre,String videoUrl,UploadMainTitleEntity entity) {
+                                  String genre,String videoUrl,UploadMainTitleEntity entity,String subtitleUrl) {
         this.imageUrl = imageUrl;
         this.description = description;
         this.episodeNumber =episodeNumber;
         this.genre = genre;
         this.videoUrl = videoUrl;
         this.uploadMainTitleEntity = entity;
+        this.subtitleUrl = subtitleUrl;
     }
 
     public AnimationEpisodeEntity() {
