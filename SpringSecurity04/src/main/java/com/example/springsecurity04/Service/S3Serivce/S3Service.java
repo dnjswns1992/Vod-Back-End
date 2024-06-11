@@ -46,6 +46,8 @@ public class S3Service {
     private final S3Presigner s3Presigner;
 
 
+
+
     @Autowired
     public S3Service(S3Config s3Config, UploadMainTitleRepository uploadMainTitleRepository,
                      AnimationEpisodeEntityRepository animationEpisodeEntityRepository,
@@ -102,16 +104,29 @@ public class S3Service {
         return animation;
     }
     public AnimationEpisodeEntityDto episodeAnimation(int id) {
-        List<AnimationEpisodeEntity> episode = animationEpisodeEntityRepository.findByUploadMainTitleEntityUploadMainTitleEntityId(id);
+        List<AnimationEpisodeEntity> episode =
+                animationEpisodeEntityRepository.findByUploadMainTitleEntityUploadMainTitleEntityIdAndVideoType(id,"main");
         UploadMainTitleEntity uploadMainTitleEntity = uploadMainTitleRepository.findById(id).get();
 
         AnimationEpisodeEntityDto animationEpisodeEntityDto = new AnimationEpisodeEntityDto();
         animationEpisodeEntityDto.setEpisode(episode);
         animationEpisodeEntityDto.setUploadMainTitleEntity(uploadMainTitleEntity);
+        return animationEpisodeEntityDto;
+    }
 
+    public AnimationEpisodeEntityDto episodeUserAnimation(int episodeId){
+
+        List<AnimationEpisodeEntity> episodeEntities =
+                animationEpisodeEntityRepository.findByUploadMainTitleEntityUploadMainTitleEntityIdAndVideoType(episodeId,"prologue");
+
+        AnimationEpisodeEntityDto animationEpisodeEntityDto = new AnimationEpisodeEntityDto();
+        UploadMainTitleEntity uploadMainTitleEntity = uploadMainTitleRepository.findById(episodeId).get();
+        animationEpisodeEntityDto.setEpisode(episodeEntities);
+        animationEpisodeEntityDto.setUploadMainTitleEntity(uploadMainTitleEntity);
 
         return animationEpisodeEntityDto;
     }
+
     /* [ETAG] S3가 파일을 합치기 위한 식별 코드 */
     /* 각 파트가 업로드될 때마다 S3는 각 파트에 대해 ETag 값을 반환합니다.
        이 값은 나중에 전체 객체를 조립할 때 사용됩니다.
@@ -143,6 +158,7 @@ public class S3Service {
                         .videoUrl(videoDto.getVideoUrl())
                         .subtitleUrl(null)
                         .entity(uploadMainTitleEntity)
+                        .videoType(videoDto.getVideoType())
                         .build();
 
                 animationEpisodeEntityRepository.save(animationEpisode);
@@ -284,7 +300,10 @@ public class S3Service {
     * 5. S3는 백엔드에 완료 요청을 받아서, 쪼개진 작업을 하나로 병합함:
     *
     *    S3는 업로드 완료 요청을 받으면, 업로드된 모든 파트를 병합하여 하나의 객체로 만듭니다.
+    *
      *  */
+
+    // ObjectKey : 파일의 이름
     public String createMultipartUpload(String objectKey) {
         CreateMultipartUploadRequest createMultipartUploadRequest = CreateMultipartUploadRequest.builder()
                 .bucket(bucketName)
@@ -346,7 +365,7 @@ public class S3Service {
                 .build();
 
         UploadPartPresignRequest presignRequest = UploadPartPresignRequest.builder()
-                .signatureDuration(Duration.ofMinutes(60))
+                .signatureDuration(Duration.ofMinutes(600))
                 .uploadPartRequest(uploadPartRequest)
                 .build();
 

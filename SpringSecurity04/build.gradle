@@ -33,7 +33,6 @@ dependencies {
     implementation 'software.amazon.awssdk:s3:2.20.27'
     implementation 'software.amazon.awssdk:auth:2.20.27'
     implementation 'software.amazon.awssdk:regions:2.20.27'
-    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.298' // AWS SDK v1.x 최신 버전
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
 }
 

@@ -53,7 +53,7 @@ public class UserConverter {
           try {
 
 
-              userDto.setRole("ROLE_ADMIN");
+              userDto.setRole("ROLE_USER");
               userDto.setNickname(userDto.getNickname());
               userDto.setProvider("FormLogin");
               userDto.setPassword(encoder.encode(userDto.getPassword()));

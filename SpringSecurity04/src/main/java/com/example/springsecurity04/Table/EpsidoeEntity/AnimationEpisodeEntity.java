@@ -26,6 +26,8 @@ public class AnimationEpisodeEntity {
     private String genre;
     private String subtitleUrl;
     private String videoUrl;
+    private String videoType;
+    
     @CreationTimestamp
     private LocalDateTime registrationTime;
 
@@ -38,7 +40,7 @@ public class AnimationEpisodeEntity {
 
     @Builder
     public AnimationEpisodeEntity(String imageUrl,String description,String episodeNumber,
-                                  String genre,String videoUrl,UploadMainTitleEntity entity,String subtitleUrl) {
+                                  String genre,String videoUrl,UploadMainTitleEntity entity,String subtitleUrl,String videoType) {
         this.imageUrl = imageUrl;
         this.description = description;
         this.episodeNumber =episodeNumber;
@@ -46,6 +48,7 @@ public class AnimationEpisodeEntity {
         this.videoUrl = videoUrl;
         this.uploadMainTitleEntity = entity;
         this.subtitleUrl = subtitleUrl;
+        this.videoType = videoType;
     }
 
     public AnimationEpisodeEntity() {

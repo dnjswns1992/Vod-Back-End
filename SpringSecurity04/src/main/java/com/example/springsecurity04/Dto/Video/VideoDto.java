@@ -16,4 +16,6 @@ public class VideoDto {
     private String videoUrl;
     private String description;
     private String genre;
+    @JsonProperty("videoType")
+    private String videoType;
 }

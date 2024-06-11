@@ -67,11 +67,24 @@ public class FileController {
         return uploadMainTitleEntities.isEmpty() ? ResponseEntity.status(404).body("게시글을 찾을 수 없습니다.")
                 : ResponseEntity.status(200).body(uploadMainTitleEntities);
     }
+    //관리자 권한 일때
     @GetMapping("/api/animation/episode/{id}")
     public ResponseEntity animationEpisode(@PathVariable int id) {
         AnimationEpisodeEntityDto animationEpisodeEntityDto = s3Service.episodeAnimation(id);
         return ResponseEntity.status(200).body(animationEpisodeEntityDto);
     }
+
+
+    //유저 권한 일 때
+
+    @GetMapping("/api/animation/episode/role_user/{id}")
+    public ResponseEntity animationUserEpisode(@PathVariable int id) {
+        AnimationEpisodeEntityDto animationEpisodeEntityDto = s3Service.episodeUserAnimation(id);
+
+        return ResponseEntity.status(200).body(animationEpisodeEntityDto);
+    }
+
+
     /* fileName: 업로드하려는 파일의 이름입니다. 이는 S3 버킷 내에서 해당 파일이 저장될 객체의 키(Key)를 나타냅니다. 예를 들어, example-video.mp4와 같은 값이 될 수 있습니다.
 
     partNumber: 멀티파트 업로드에서 현재 업로드 중인 파트의 번호입니다. S3에서는 각 파트를 번호로 식별하며, 번호는 1부터 시작합니다. 예를 들어, 첫 번째 파트는 partNumber가 1이고, 두 번째 파트는 2입니다.
@@ -97,6 +110,15 @@ public class FileController {
     uploadId가 없으면 S3는 어떤 멀티파트 업로드 세션에 이 파트가 속하는지 알 수 없습니다.
     이로 인해 사전 서명된 URL을 생성할 수 없고, 파트를 업로드할 수 없으므로 요청은 실패하게 됩니다. */
 
+
+    @GetMapping("/api/s3/create-multipart-upload")
+    public ResponseEntity<Map<String, String>> createMultipartUpload(@RequestParam String fileName) {
+        String uploadId = s3Service.createMultipartUpload(fileName);
+        Map<String, String> response = new HashMap<>();
+        response.put("uploadId", uploadId);
+        return ResponseEntity.ok(response);
+    }
+    // 서명된 Url을 주는 api 파트 마다 한번씩 요청 됨
     @GetMapping("/api/s3/generate-presigned-url")
     public ResponseEntity<String> generatePresignedUrl(@RequestParam String fileName,
                                                        @RequestParam int partNumber,
@@ -105,16 +127,7 @@ public class FileController {
         return ResponseEntity.ok(url);
     }
 
-    @GetMapping("/api/s3/create-multipart-upload")
-    public ResponseEntity<Map<String, String>> createMultipartUpload(@RequestParam String fileName) {
-        log.info("Creating multipart upload for file: {}", fileName);
-        String uploadId = s3Service.createMultipartUpload(fileName);
-        log.info("Multipart upload created with uploadId: {}", uploadId);
-        Map<String, String> response = new HashMap<>();
-        response.put("uploadId", uploadId);
-        return ResponseEntity.ok(response);
-    }
-
+    //
     @PostMapping("/api/s3/complete-multipart-upload")
     public ResponseEntity<Void> completeMultipartUpload(@RequestBody CompleteMultipartUploadRequestCustom request) {
 
@@ -122,6 +135,9 @@ public class FileController {
         s3Service.completeMultipartUpload(request);
         return ResponseEntity.ok().build();
     }
+
+
+
         @PostMapping("/api/file/video/save-metadata")
     public ResponseEntity<String> saveMetadata(@RequestPart("videoDto") VideoDto videoDto,
                                                @RequestPart("Image") MultipartFile imageFile,

@@ -41,6 +41,7 @@ public class S3Config {
         return bucketName;
     }
 
+    //동영상을 업로드 하기위한 Config
     @Bean
     public S3Presigner s3Presigner() {
         AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKeyId, secretKey);
