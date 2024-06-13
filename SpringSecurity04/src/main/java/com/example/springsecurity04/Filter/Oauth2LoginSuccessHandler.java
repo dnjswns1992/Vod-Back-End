@@ -44,7 +44,7 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         response.setContentType("application/json");
         response.addHeader("Authorization","Bearer "+oauth2JwtToken);
         response.setStatus(HttpServletResponse.SC_OK);
-        response.sendRedirect("http://localhost:5178/callback?access-token=" + oauth2JwtToken);
+        response.sendRedirect("https://localhost:5173/callback?access-token=" + oauth2JwtToken);
 
     }
 }
