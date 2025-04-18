@@ -1,10 +1,12 @@
 package com.example.springsecurity04.Controller.S3Controller;
 
 import com.example.springsecurity04.Dto.Video.Animation.AnimationEpisodeEntityDto;
+import com.example.springsecurity04.Dto.Video.Movie.MovieDto;
 import com.example.springsecurity04.Dto.Video.UploadMainTitleDto;
 import com.example.springsecurity04.Dto.Video.VideoDto;
 import com.example.springsecurity04.Request.CompleteMultipartUploadRequestCustom;
 import com.example.springsecurity04.Service.S3Serivce.S3Service;
+import com.example.springsecurity04.Table.EpsidoeEntity.MovieEpisodeEntity;
 import com.example.springsecurity04.Table.Video.UploadMainTitleEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,20 +38,7 @@ public class FileController {
             return ResponseEntity.status(500).body("file upload failed" + e.getMessage());
         }
     }
-//    /* 에피소드 (동영상) 등록 */
-//    @PostMapping("/api/file/video/upload")
-//    public ResponseEntity<String> uploadVideo(
-//            @RequestPart("videoDto") VideoDto videoDto,
-//            @RequestPart("Image") MultipartFile imageFile,
-//            @RequestHeader("Session-Id")String sessionId,
-//            @RequestPart(value = "subtitle" , required = false)MultipartFile subtitle) {
-//        try {
-//            String key = s3Service.uploadLargeFile(videoDto,imageFile,sessionId,subtitle);
-//            return ResponseEntity.ok("Video upload success: " + key);
-//        } catch (IOException e) {
-//            return ResponseEntity.status(500).body("Video upload failed: " + e.getMessage());
-//        }
-//    }
+
     /* 메인 타이틀 등록 */
     @PostMapping("/api/mainTitle/upload")
     public ResponseEntity<String> uploadMainTitle(@RequestPart("Image") MultipartFile multipartFile,
@@ -60,6 +50,7 @@ public class FileController {
         return responseEntity;
     }
 
+    //애니메이션을 가져오는 서비스 (메인 화면에서만)
     @GetMapping("/api/animation/bring")
     public ResponseEntity animationBring(){
         List<UploadMainTitleEntity> uploadMainTitleEntities = s3Service.animationVideoService();
@@ -67,12 +58,30 @@ public class FileController {
         return uploadMainTitleEntities.isEmpty() ? ResponseEntity.status(404).body("게시글을 찾을 수 없습니다.")
                 : ResponseEntity.status(200).body(uploadMainTitleEntities);
     }
-    //관리자 권한 일때
+
+    //애니메이션을 가져옴 (에피소드 각 화별)
     @GetMapping("/api/animation/episode/{id}")
     public ResponseEntity animationEpisode(@PathVariable int id) {
         AnimationEpisodeEntityDto animationEpisodeEntityDto = s3Service.episodeAnimation(id);
         return ResponseEntity.status(200).body(animationEpisodeEntityDto);
     }
+    @GetMapping("/api/movie/episode/{id}")
+    public ResponseEntity movieEpisode(@PathVariable int id){
+        MovieDto movieDto = s3Service.episodeMovie(id);
+        return ResponseEntity.status(200).body(movieDto);
+    }
+
+    //영화 가져옴 (메인 화면에서만)
+    @GetMapping("/api/movie/bring")
+    public ResponseEntity movieBring(){
+        List<UploadMainTitleEntity> uploadMainTitleMovie = s3Service.movieVideoService();
+
+        return uploadMainTitleMovie.isEmpty() ? ResponseEntity.status(404).body("게시글을 찾을 수 없습니다.")
+                : ResponseEntity.status(200).body(uploadMainTitleMovie);
+    }
+
+
+
 
 
     //유저 권한 일 때

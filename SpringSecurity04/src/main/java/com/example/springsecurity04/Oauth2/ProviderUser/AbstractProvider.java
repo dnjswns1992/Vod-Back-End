@@ -21,9 +21,9 @@ public abstract class AbstractProvider implements ProviderUser {
         this.oAuth2User = oAuth2User;
         this.attribute = attribute;
     }
-
-
-
+    public String profileImage(){
+        return attribute.get("picture").toString();
+    }
     @Override
     public String email() {
         return attribute.get("email").toString();

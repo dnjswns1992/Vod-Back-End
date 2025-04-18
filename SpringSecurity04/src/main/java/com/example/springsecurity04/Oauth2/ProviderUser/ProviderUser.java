@@ -9,7 +9,7 @@ public interface ProviderUser {
 
     String getId();
     String nickName();
-
+    String profileImage();
     String email();
     String provider();
     List<? extends GrantedAuthority> getAuthority();

@@ -1,15 +1,16 @@
 package com.example.springsecurity04.Service.S3Serivce;
 import com.example.springsecurity04.Config.S3.S3Config;
 import com.example.springsecurity04.Dto.Video.Animation.AnimationEpisodeEntityDto;
+import com.example.springsecurity04.Dto.Video.Movie.MovieDto;
 import com.example.springsecurity04.Dto.Video.UploadMainTitleDto;
 import com.example.springsecurity04.Dto.Video.VideoDto;
 import com.example.springsecurity04.Handler.WebSocketHandler.ProgressWebSocketHandler;
 import com.example.springsecurity04.Repository.EpisodeRepository.AnimationEpisodeEntityRepository;
-import com.example.springsecurity04.Repository.EpisodeRepository.DramaEpisodeRepository;
+import com.example.springsecurity04.Repository.EpisodeRepository.MovieEpisodeRepository;
 import com.example.springsecurity04.Request.CompleteMultipartUploadRequestCustom;
 import com.example.springsecurity04.Table.EpsidoeEntity.AnimationEpisodeEntity;
 import com.example.springsecurity04.Repository.VideoRepository.UploadMainTitleRepository;
-import com.example.springsecurity04.Table.EpsidoeEntity.DramaEpisodeEntity;
+import com.example.springsecurity04.Table.EpsidoeEntity.MovieEpisodeEntity;
 import com.example.springsecurity04.Table.Video.UploadMainTitleEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -23,6 +24,7 @@ import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.UploadPartPresignRequest;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -41,7 +43,7 @@ public class S3Service {
     private final String bucketName;
     private final UploadMainTitleRepository uploadMainTitleRepository;
     private final AnimationEpisodeEntityRepository animationEpisodeEntityRepository;
-    private final DramaEpisodeRepository dramaEpisodeRepository;
+    private final MovieEpisodeRepository dramaEpisodeRepository;
     private final ProgressWebSocketHandler webSocketHandler;
     private final S3Presigner s3Presigner;
 
@@ -51,7 +53,7 @@ public class S3Service {
     @Autowired
     public S3Service(S3Config s3Config, UploadMainTitleRepository uploadMainTitleRepository,
                      AnimationEpisodeEntityRepository animationEpisodeEntityRepository,
-                     DramaEpisodeRepository dramaEpisodeRepository,ProgressWebSocketHandler webSocketHandler,S3Presigner s3Presigner) {
+                     MovieEpisodeRepository dramaEpisodeRepository, ProgressWebSocketHandler webSocketHandler, S3Presigner s3Presigner) {
         this.s3Client = s3Config.s3Client();
         this.bucketName = s3Config.getBucketName();
         this.uploadMainTitleRepository = uploadMainTitleRepository;
@@ -97,12 +99,19 @@ public class S3Service {
             return ResponseEntity.status(400).body("등록 할 수 없습니다.");
         }
     }
-    /* 애니메이션 가져오는 서비스 */
+    /* 애니메이션 타이틀을 가져오는 서비스 * */
     public List<UploadMainTitleEntity> animationVideoService(){
-        List<UploadMainTitleEntity> animation = uploadMainTitleRepository.findAll();
+        List<UploadMainTitleEntity> animation = uploadMainTitleRepository.findByGenre("애니");
 
         return animation;
     }
+    public List<UploadMainTitleEntity> movieVideoService(){
+        List<UploadMainTitleEntity> movieVideo = uploadMainTitleRepository.findByGenre("영화");
+
+        return movieVideo;
+    }
+
+
     public AnimationEpisodeEntityDto episodeAnimation(int id) {
         List<AnimationEpisodeEntity> episode =
                 animationEpisodeEntityRepository.findByUploadMainTitleEntityUploadMainTitleEntityIdAndVideoType(id,"main");
@@ -113,6 +122,25 @@ public class S3Service {
         animationEpisodeEntityDto.setUploadMainTitleEntity(uploadMainTitleEntity);
         return animationEpisodeEntityDto;
     }
+    public MovieDto episodeMovie(int id) {
+        List<MovieEpisodeEntity> movieEpisodeEntities = dramaEpisodeRepository.findByMainTitleId(id);
+
+        MovieDto movieDto = new MovieDto();
+        movieDto.setEpisode(movieEpisodeEntities);
+
+        if (!movieEpisodeEntities.isEmpty()) {
+            movieDto.setUploadMainTitleEntity(movieEpisodeEntities.get(0).getUploadMainTitleEntity());
+        } else {
+            UploadMainTitleEntity mainTitle = uploadMainTitleRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("MainTitleEntity not found for id: " + id));
+            movieDto.setUploadMainTitleEntity(mainTitle);
+        }
+
+        return movieDto;
+    }
+
+
+
 
     public AnimationEpisodeEntityDto episodeUserAnimation(int episodeId){
 
@@ -162,13 +190,18 @@ public class S3Service {
                         .build();
 
                 animationEpisodeEntityRepository.save(animationEpisode);
+
+                
             } else if (uploadMainTitleEntity.getGenre().equals("영화")) {
-                DramaEpisodeEntity dramaEpisodeEntity = DramaEpisodeEntity.builder()
+                MovieEpisodeEntity dramaEpisodeEntity = MovieEpisodeEntity.builder()
                         .episodeNumber(videoDto.getEpisodeNumber())
                         .description(videoDto.getDescription())
                         .genre(videoDto.getGenre())
-                        .ImageUrl(imageFileUri)
+                        .imageUrl(imageFileUri)
                         .videoUrl(videoDto.getVideoUrl())
+                        .subtitleUrl(subtitleUrl)  // ✅ 빠져있던 subtitle도 넣어주고
+                        .videoType(videoDto.getVideoType()) // ✅ 타입도
+                        .entity(uploadMainTitleEntity) // ✅ 이 줄을 꼭 포함!
                         .build();
 
                 dramaEpisodeRepository.save(dramaEpisodeEntity);

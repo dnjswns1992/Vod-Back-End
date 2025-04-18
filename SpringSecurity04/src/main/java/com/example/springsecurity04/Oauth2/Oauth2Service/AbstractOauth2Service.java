@@ -46,7 +46,8 @@ public abstract class AbstractOauth2Service {
             if (providerUser.provider().equals("google")) {
 
                 Oauth2Entity oauth2Entity = Oauth2Entity.builder().nickName(providerUser.email())
-                        .email(providerUser.email()).provider(providerUser.provider()).role("ROLE_USER").build();
+                        .email(providerUser.email()).provider(providerUser.provider())
+                        .role("ROLE_USER").Image(providerUser.profileImage()).build();
 
                 repository.save(oauth2Entity);
 
@@ -61,6 +62,7 @@ public abstract class AbstractOauth2Service {
                         .nickName(providerUser.nickName())
                         .email(providerUser.email())
                         .role("ROLE_USER")
+                        .Image(providerUser.profileImage())
                         .provider(providerUser.provider())
                         .build();
 

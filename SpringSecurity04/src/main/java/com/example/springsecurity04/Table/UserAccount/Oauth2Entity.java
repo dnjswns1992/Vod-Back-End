@@ -29,7 +29,7 @@ public class Oauth2Entity {
     @CreationTimestamp
     private LocalDate createAt;
     private String userIp;
-    private String Image;
+    private String imageUrl;
 
     @OneToOne(mappedBy ="oauth2Entity",cascade = CascadeType.ALL)
     @JsonIgnore
@@ -48,6 +48,6 @@ public class Oauth2Entity {
         this.nickName = nickName;
         this.provider = provider;
         this.role = role;
-        this.Image = Image;
+        this.imageUrl = Image;
     }
 }
