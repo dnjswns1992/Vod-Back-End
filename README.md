@@ -3,161 +3,135 @@
 
 
 
-📺 StreamCraft - Fullstack Video Platform Backend
+# 🎬 StreamCraft - 영상 스트리밍 플랫폼
 
-StreamCraft는 동영상 업로드 및 스트리밍 기능을 중심으로, 커뮤니티 게시판, JWT 기반 인증, 소셜 로그인(OAuth2), WebSocket 실시간 피드백 기능을 통합한 Spring Boot 기반 백엔드 프로젝트입니다. AWS S3를 활용한 대용량 파일 업로드, RESTful API 구조 설계, 보안 인증 계층 등 실제 서비스와 유사한 구조를 갖추고 있어 포트폴리오 및 실무 능력 검증에 적합합니다.
+**Spring Boot + AWS S3 + WebSocket 기반 영상 스트리밍/커뮤니티 플랫폼**
 
-🧱 기술 스택
+> 사용자는 애니메이션, 영화 영상을 업로드하고, 실시간 업로드 진행률을 확인하며, 커뮤니티에 글/댓글을 작성할 수 있습니다. OAuth2 및 JWT 기반 보안 시스템으로 사용자 인증을 처리합니다.
 
-Language: Java 17
+---
 
-Framework: Spring Boot 3.x, Spring Security
+## 🧱 프로젝트 아키텍처
 
-Authentication: JWT, OAuth2 (Google, Naver)
+![StreamCraft 아키텍처 다이어그램](./A_flowchart_depicts_the_architecture_of_StreamCraf.png)
 
-Database: MySQL (JPA, Hibernate)
+---
 
-Cloud Service: AWS S3 (Multipart Upload, Presigned URL)
+## 📦 주요 기술 스택
 
-WebSocket: SockJS, STOMP for real-time upload progress
+| 분야         | 기술                                                                 |
+|--------------|----------------------------------------------------------------------|
+| Backend      | Spring Boot, Spring Security, Spring Web, Spring Data JPA            |
+| 인증         | OAuth2, JWT, Security Filter Chain                                   |
+| 인프라       | AWS S3 (Presigned URL, Multipart Upload), WebSocket                  |
+| 데이터베이스 | MySQL                                                                 |
+| 빌드         | Gradle                                                                |
+| 문서화       | Swagger/OpenAPI                                                       |
+| 개발 도구    | IntelliJ IDEA, GitHub, Postman                                        |
 
-Build Tool: Gradle
+---
 
-Documentation: Swagger (OpenAPI)
+## 📁 패키지 구조 요약
 
-CI/CD & Infra: Local 개발 기준 (향후 확장 가능)
+### 🔧 config
 
-🧠 핵심 기능 및 구성
+- `core`: 공통 Bean 등록 (ModelMapper, Converter, Manager 등)
+- `cors`: CORS 정책 설정 (localhost:5173 허용)
+- `s3`: AWS S3 Client 및 Presigner 설정
+- `security`: JWT 인증, OAuth2 로그인 설정, 보안 필터 구성
+- `websocket`: WebSocket 설정 및 핸들러 등록
 
-✅ 1. 사용자 인증 및 회원가입
+### 🧩 controller
 
-JWT 기반 인증 처리 (Access / Refresh Token 구조)
+- `auth`: 회원가입 처리 (Form + 이미지 업로드)
+- `file`: 영상 업로드, 메타데이터 처리 (S3와 연동)
+- `check`: 메인 타이틀 중복 검사 API
+- `post`: 게시글 CRUD, 댓글 처리
+- `advice`: 전역 예외 처리 핸들러
 
-OAuth2 소셜 로그인 (Google, Naver) → 공통 사용자 구조로 통합 관리
+### 🧬 service
 
-사용자 가입 시 프로필 이미지 AWS S3 업로드 지원
+- `userRegister`: 회원가입 처리, 프로필 이미지 업로드
+- `userdetails`: Spring Security UserDetailsService 구현
+- `user`: JWT 기반 사용자 정보 조회
+- `post`: 게시글/댓글 작성/조회/삭제 처리
+- `s3`: S3 업로드/메타데이터 저장/진행률 전달
 
-필드 중복 검사 (아이디, 이메일, 닉네임)
+### 🧰 converter
 
-✅ 2. 영상 업로드 및 메타데이터 관리
+- `UserConverter`: Form/OAuth2 회원가입 로직 처리
+- `ProviderOauth2Converter`: 소셜 로그인 사용자 정보 변환
 
-AWS S3 Presigned URL을 이용한 대용량 멀티파트 업로드 처리
+### 📡 filter
 
-영상 메인 타이틀 / 에피소드 별 업로드 처리 (영화 / 애니메이션)
+- `JwtCheckFilter`: JWT 유효성 검사
+- `UserCheckFilter`: 일반 로그인 인증 처리
+- `Oauth2LoginSuccessHandler`: OAuth2 로그인 후 토큰 발급
 
-업로드된 영상 메타데이터 DB 저장 및 검색 기능
+### 💬 handler
 
-✅ 3. 커뮤니티 게시판 (Post & Comment)
+- `ErrorHandler`: 이메일/닉네임/아이디 중복 예외 정의
+- `WebSocketHandler`: 업로드 진행률 WebSocket 핸들러
 
-게시글 등록, 조회, 삭제 기능 (조회수 포함)
+### 📄 dto
 
-댓글 작성, 조회, 삭제 기능 → 인증 기반 사용자 식별 처리
+- `user`, `media`, `community`, `s3part`: 응답 및 요청 DTO 전담
+- DTO는 모두 POJO 또는 record 기반, ModelMapper 변환 지원
 
-사용자 인증 기반 게시글 소유권 확인 및 삭제 제어
+### 🗃️ repository
 
-✅ 4. 실시간 WebSocket 기능
+- `user`: 일반 유저 / OAuth2 유저 / 공통 유저 통합 관리
+- `post`: 게시글/댓글 저장소
+- `video.upload`: 영상 메타데이터 및 장르/제목 검색
+- `episode`: 애니메이션/영화 에피소드 조회
 
-영상 업로드 시 진행률을 WebSocket 기반 실시간 피드백으로 전송
+---
 
-클라이언트가 연결 시 sessionId로 식별하여 메시지 송신
+## 🚀 기능 요약
 
-모든 Origin 허용 설정으로 다양한 프론트엔드 통합 가능
+| 기능명              | 설명                                                                 |
+|---------------------|----------------------------------------------------------------------|
+| 회원가입            | 이미지 업로드 + 사용자 정보 저장, 중복 검사 포함                     |
+| JWT 로그인          | 일반 로그인 및 OAuth2 로그인 후 토큰 발급 및 인증                     |
+| 영상 업로드         | Presigned URL 기반 멀티파트 업로드 + 메타데이터 등록                 |
+| 실시간 업로드 진행률 | WebSocket 기반으로 클라이언트에게 업로드 상태 실시간 전달              |
+| 커뮤니티 기능        | 게시글 작성/조회/삭제 + 댓글 작성/조회/삭제                           |
+| 영상 검색           | 제목/장르 기반 영상 검색 API 제공                                     |
 
-🗂️ 프로젝트 구조 요약
+---
 
-📁 controller
+## 💡 담당 역할 및 경험 기술 강조
 
-REST API 진입점 (@RestController)
+- **Spring Security 기반 OAuth2/JWT 인증 처리 전반 구현**
+  - 커스텀 필터 설계 및 사용자 인증 흐름 제어
+  - JWT 토큰 생성/검증/리프레시 처리
 
-회원가입, 영상 업로드, 커뮤니티, 메인 타이틀 중복 체크 등 라우팅 담당
+- **AWS S3 연동 영상 업로드 시스템 구축**
+  - Presigned URL 생성 및 대용량 파일 멀티파트 업로드
+  - WebSocket으로 실시간 업로드 진행률 전달
 
-📁 service
+- **도메인 기반 설계 및 계층적 패키지 구조 구현**
+  - Controller → Service → Converter → Repository 계층 분리
+  - DTO/Entity 분리 및 ModelMapper 자동 변환 적용
 
-핵심 비즈니스 로직 구현 계층
+- **ExceptionHandler 기반의 예외 관리 통합**
+  - 사용자 친화적인 예외 메시지 제공 및 로깅
 
-S3 업로드 처리, 사용자 인증, 커뮤니티 게시글/댓글 관리 포함
+- **RESTful API 설계 및 Swagger 기반 문서화 경험**
 
-📁 repository
+---
 
-JPA 기반 CRUD 처리 계층
+## 🧪 실행 방법
 
-사용자, 게시글, 댓글, 영상 메타데이터 전용 리포지토리 분리 구성
+```bash
+# 1. 프로젝트 클론
+git clone https://github.com/your-id/StreamCraft.git
 
-📁 config
+# 2. application.yml 설정 (AWS 키, DB 연결 등)
 
-보안(Spring Security), CORS, WebSocket, S3 등 전역 설정 클래스 모음
+# 3. 실행
+./gradlew bootRun
 
-📁 filter
-
-JWT 인증 필터 / Form 로그인 / OAuth2 후처리 필터 포함
-
-인증 흐름 제어 및 예외 응답 구성
-
-📁 dto
-
-클라이언트 ↔ 서버 간 데이터 전달용 구조화 객체
-
-사용자, 커뮤니티, 영상 업로드, S3 멀티파트 등 세분화 설계
-
-📁 converter
-
-OAuth2 공급자(Google, Naver)별 사용자 정보를 공통 구조로 변환
-
-사용자 가입 시 DTO → Entity 변환 및 프로필 업로드 처리 담당
-
-📁 handler
-
-예외 핸들러 (@ControllerAdvice), WebSocket 핸들러 클래스 분리
-
-🌐 주요 API 예시
-
-기능
-
-Method
-
-Endpoint
-
-회원가입
-
-POST
-
-/register
-
-메인 타이틀 중복 검사
-
-GET
-
-/api/MainTitle/check
-
-영상 업로드
-
-POST
-
-/api/file/upload
-
-커뮤니티 게시글 등록
-
-POST
-
-/user/createPost
-
-댓글 작성
-
-POST
-
-/user/comment/write/{postId}
-
-🖼️ 시스템 구성 다이어그램
-
-
-
-💬 학습 포인트 & 기술 경험 요약
-
-✅ Spring Security 기반 사용자 인증 흐름 전체 구현 경험 (JWT + OAuth2)
-
-✅ AWS S3 연동 및 Presigned URL, 멀티파트 업로드 처리 실습
-
-✅ WebSocket 기반 실시간 서버-클라이언트 통신 구조 이해
 
 ✅ JPA 기반 Repository 분리 설계 및 커스텀 쿼리 적용
 
