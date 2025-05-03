@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/e6823bfe-bde4-4e7a-8ee5-e4a37a7a20dd)
+
 
 
 
@@ -13,7 +13,7 @@
 
 ## 🧱 프로젝트 아키텍처
 
-![StreamCraft 아키텍처 다이어그램](./A_flowchart_depicts_the_architecture_of_StreamCraf.png)
+![image](https://github.com/user-attachments/assets/e6823bfe-bde4-4e7a-8ee5-e4a37a7a20dd)
 
 ---
 
