@@ -2,7 +2,7 @@ package com.example.StreamCraft.jwtutil;
 
 
 import com.example.StreamCraft.dto.user.UserInfoResponseDto;
-import com.example.StreamCraft.Service.jwtCheckService.UserDetailsInformation;
+import com.example.StreamCraft.service.userdetails.UserDetailsInformation;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class AuthenticatedUserUtil {

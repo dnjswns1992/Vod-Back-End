@@ -2,13 +2,13 @@ package com.example.StreamCraft.filter;
 
 import com.example.StreamCraft.dto.user.UserInfoResponseDto;
 import com.example.StreamCraft.jwtutil.JwtTokenProvider;
-import com.example.StreamCraft.Oauth2.ProviderUser.FormLoginOauthCombine;
-import com.example.StreamCraft.Repository.CommonRepository;
-import com.example.StreamCraft.Repository.Oauth2UserRepository;
-import com.example.StreamCraft.Repository.UserRepository;
-import com.example.StreamCraft.Service.jwtCheckService.UserDetailsInformation;
-import com.example.StreamCraft.Table.Common.CommonEntity;
-import com.example.StreamCraft.Table.UserAccount.Oauth2Entity;
+import com.example.StreamCraft.oauth2.ProviderUser.FormLoginOauthCombine;
+import com.example.StreamCraft.Repository.user.CommonRepository;
+import com.example.StreamCraft.Repository.user.Oauth2UserRepository;
+import com.example.StreamCraft.Repository.user.UserRepository;
+import com.example.StreamCraft.service.userdetails.UserDetailsInformation;
+import com.example.StreamCraft.Entity.commom.MergedUserEntity;
+import com.example.StreamCraft.Entity.user.Oauth2Entity;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,7 +76,7 @@ public class JwtCheckFilter extends OncePerRequestFilter {
 
             if (provider.equals("FormLogin")) {
                 String findUsername = username.get("username", String.class);
-                Optional<CommonEntity> byUsername = commonRepository.findByUsername(findUsername);
+                Optional<MergedUserEntity> byUsername = commonRepository.findByUsername(findUsername);
 
                 if (byUsername.isEmpty()) {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

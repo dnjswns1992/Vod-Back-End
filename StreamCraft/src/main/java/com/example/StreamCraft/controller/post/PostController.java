@@ -1,8 +1,8 @@
 package com.example.StreamCraft.controller.post;
 import com.example.StreamCraft.dto.Commuity.PostWithDto;
 import com.example.StreamCraft.dto.Commuity.PostResponseDto;
-import com.example.StreamCraft.Service.PostService.PostService;
-import com.example.StreamCraft.Table.Post.PostEntity;
+import com.example.StreamCraft.service.PostService.CommunityPostService;
+import com.example.StreamCraft.Entity.communitypost.PostEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ import java.util.List;
 
 public class PostController {
 
-    private final PostService service;
+    private final CommunityPostService service;
 
     /**
      * 게시글 작성
@@ -42,7 +42,7 @@ public class PostController {
     @GetMapping("/user/postDetail/{postId}")
     public ResponseEntity<?> DetailsViewPost(@PathVariable Integer postId){
 
-        PostWithDto dto = service.DetailsPostView(postId);
+        PostWithDto dto = service.getPostDetails(postId);
 
         return dto == null ? ResponseEntity.status(HttpStatus.NO_CONTENT).build() : ResponseEntity.status(HttpStatus.OK).body(dto);
     }
@@ -52,7 +52,7 @@ public class PostController {
      */
     @GetMapping("/user/bring/post")
     public ResponseEntity bringPost() {
-        List<PostEntity> postEntities = service.bringPost();
+        List<PostEntity> postEntities = service.getAllPosts();
 
         return ResponseEntity.ok(postEntities);
     }
@@ -64,7 +64,7 @@ public class PostController {
     @GetMapping("user/postRemove/{postId}")
     public ResponseEntity<?> postRemove(@PathVariable int postId) {
 
-        boolean check = service.removePost(postId);
+        boolean check = service.deletePost(postId);
 
         return check == true ? ResponseEntity.status(HttpStatus.OK).body("게시글이 성공적으로 삭제 되었습니다."):
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자가 다릅니다.");

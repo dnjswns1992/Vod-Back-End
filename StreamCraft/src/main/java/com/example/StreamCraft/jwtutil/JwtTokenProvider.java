@@ -1,9 +1,9 @@
 package com.example.StreamCraft.jwtutil;
 
 
-import com.example.StreamCraft.Repository.UserRepository;
-import com.example.StreamCraft.Service.jwtCheckService.UserDetailsInformation;
-import com.example.StreamCraft.Table.UserAccount.UserEntity;
+import com.example.StreamCraft.Repository.user.UserRepository;
+import com.example.StreamCraft.service.userdetails.UserDetailsInformation;
+import com.example.StreamCraft.Entity.user.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

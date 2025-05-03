@@ -59,6 +59,6 @@ OAuth2 로그인 이후 JWT를 발급하거나
 Spring Security 인증 후 클라이언트로 JWT 전송 등에서 활용됩니다.
 
 📁 연관 클래스 위치
-UserDetailsInformation: com.example.StreamCraft.Service.jwtCheckService
+UserDetailsInformation: com.example.StreamCraft.service.userdetails
 
 UserInfoResponseDto: com.example.StreamCraft.dto.user

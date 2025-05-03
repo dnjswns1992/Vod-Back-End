@@ -1,7 +1,7 @@
 package com.example.StreamCraft.dto.media.animation;
 
-import com.example.StreamCraft.Table.EpsidoeEntity.AnimationEpisodeEntity;
-import com.example.StreamCraft.Table.Video.UploadMainTitleEntity;
+import com.example.StreamCraft.Entity.episode.animation.AnimationEpisodeEntity;
+import com.example.StreamCraft.Entity.Video.UploadMainTitleEntity;
 import lombok.Getter;
 import lombok.Setter;
 

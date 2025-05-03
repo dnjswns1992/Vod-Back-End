@@ -1,6 +1,6 @@
 package com.example.StreamCraft.dto.Commuity;
 
-import com.example.StreamCraft.Table.Post.CommentEntity;
+import com.example.StreamCraft.Entity.communitypost.CommentEntity;
 
 import java.util.List;
 import java.util.Optional;

@@ -5,14 +5,14 @@ import com.example.StreamCraft.dto.user.UserRegisterDto;
 import com.example.StreamCraft.Handler.ErrorHandler.DuplicateEmailException;
 import com.example.StreamCraft.Handler.ErrorHandler.DuplicateNickNameException;
 import com.example.StreamCraft.Handler.ErrorHandler.DuplicateUsernameException;
-import com.example.StreamCraft.Oauth2.ProviderUser.ProviderUser;
-import com.example.StreamCraft.Repository.CommonRepository;
-import com.example.StreamCraft.Repository.Oauth2UserRepository;
-import com.example.StreamCraft.Repository.UserRepository;
-import com.example.StreamCraft.Service.S3Serivce.S3Service;
-import com.example.StreamCraft.Table.Common.CommonEntity;
-import com.example.StreamCraft.Table.UserAccount.Oauth2Entity;
-import com.example.StreamCraft.Table.UserAccount.UserEntity;
+import com.example.StreamCraft.oauth2.ProviderUser.ProviderUser;
+import com.example.StreamCraft.Repository.user.CommonRepository;
+import com.example.StreamCraft.Repository.user.Oauth2UserRepository;
+import com.example.StreamCraft.Repository.user.UserRepository;
+import com.example.StreamCraft.service.S3Serivce.S3Service;
+import com.example.StreamCraft.Entity.commom.MergedUserEntity;
+import com.example.StreamCraft.Entity.user.Oauth2Entity;
+import com.example.StreamCraft.Entity.user.UserEntity;
 import com.example.StreamCraft.UserAccount.TransferModelMapper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -92,13 +92,13 @@ public class UserConverter {
                   entity.setImageUrl(upload);
                   repository.save(entity);
 
-                  CommonEntity commonEntity = new CommonEntity(entity);
+                  MergedUserEntity mergedUserEntity = new MergedUserEntity(entity);
 
                   // IP 주소 저장
                   entity.setUserIp(servletRequest.getRemoteAddr());
 
                   // 공용 테이블(CommonEntity)에도 저장
-                  commonRepository.save(commonEntity);
+                  commonRepository.save(mergedUserEntity);
 
                   return true;
               }catch (Exception e) {
@@ -115,7 +115,7 @@ public class UserConverter {
      */
     public void Oauth2UserRegister(ProviderUser providerUser, Oauth2Entity oauth2Entity){
 
-        CommonEntity build = CommonEntity.builder().username(oauth2Entity.getEmail())
+        MergedUserEntity build = MergedUserEntity.builder().username(oauth2Entity.getEmail())
                 .provider(oauth2Entity.getProvider())
                 .nickname(oauth2Entity.getNickName())
                 .role(oauth2Entity.getRole())

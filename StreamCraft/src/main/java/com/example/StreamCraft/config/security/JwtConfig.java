@@ -4,9 +4,9 @@ package com.example.StreamCraft.config.security;
 import com.example.StreamCraft.filter.JwtCheckFilter;
 import com.example.StreamCraft.filter.Oauth2LoginSuccessHandler;
 import com.example.StreamCraft.filter.UserCheckFilter;
-import com.example.StreamCraft.Repository.CommonRepository;
-import com.example.StreamCraft.Repository.Oauth2UserRepository;
-import com.example.StreamCraft.Repository.UserRepository;
+import com.example.StreamCraft.Repository.user.CommonRepository;
+import com.example.StreamCraft.Repository.user.Oauth2UserRepository;
+import com.example.StreamCraft.Repository.user.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

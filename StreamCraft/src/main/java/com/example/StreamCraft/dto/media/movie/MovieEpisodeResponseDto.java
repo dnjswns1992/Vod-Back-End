@@ -1,6 +1,6 @@
 package com.example.StreamCraft.dto.media.movie;
-import com.example.StreamCraft.Table.EpsidoeEntity.MovieEpisodeEntity;
-import com.example.StreamCraft.Table.Video.UploadMainTitleEntity;
+import com.example.StreamCraft.Entity.episode.movie.MovieEpisodeEntity;
+import com.example.StreamCraft.Entity.Video.UploadMainTitleEntity;
 import lombok.Getter;
 import lombok.Setter;
 

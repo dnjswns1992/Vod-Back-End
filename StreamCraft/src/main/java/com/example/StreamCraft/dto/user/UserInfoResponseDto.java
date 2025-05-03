@@ -1,6 +1,6 @@
 package com.example.StreamCraft.dto.user;
 
-import com.example.StreamCraft.Oauth2.ProviderUser.ProviderUser;
+import com.example.StreamCraft.oauth2.ProviderUser.ProviderUser;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

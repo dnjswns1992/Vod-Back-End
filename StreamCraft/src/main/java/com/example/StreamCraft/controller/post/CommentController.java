@@ -2,8 +2,8 @@ package com.example.StreamCraft.controller.post;
 
 
 import com.example.StreamCraft.dto.Commuity.CommentResponseDto;
-import com.example.StreamCraft.Service.PostService.CommentService;
-import com.example.StreamCraft.Table.Post.CommentEntity;
+import com.example.StreamCraft.service.PostService.CommunityCommentService;
+import com.example.StreamCraft.Entity.communitypost.CommentEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,14 +25,14 @@ import java.util.List;
  */
 public class CommentController {
 
-    private final CommentService commentService;
+    private final CommunityCommentService communityCommentService;
 
 
     @PostMapping("/user/comment/write/{postId}")
     public ResponseEntity<?> commentWrite(@RequestBody CommentResponseDto commentResponseDto,
                                           @PathVariable int postId,@RequestHeader("Authorization")String token){
 
-        boolean check = commentService.CommentWriteService(commentResponseDto, postId,token);
+        boolean check = communityCommentService.writeComment(commentResponseDto, postId,token);
         log.info("check = {}",check);
         return check == true ? ResponseEntity.status(HttpStatus.OK).body("댓글이 등록 되었습니다.")
         : ResponseEntity.status(HttpStatus.BAD_REQUEST).body("게시글 등록에 실패 했습니다.");
@@ -44,7 +44,7 @@ public class CommentController {
 
     @GetMapping("/user/comment/bring/{postId}")
     public ResponseEntity BringComment(@PathVariable int postId){
-        List<CommentEntity> commentEntities = commentService.CommentBring(postId);
+        List<CommentEntity> commentEntities = communityCommentService.getCommentsByPostId(postId);
         return ResponseEntity.ok(commentEntities);
     }
 
@@ -54,7 +54,7 @@ public class CommentController {
 
     @GetMapping("/user/comment/remove/{commentId}")
     public ResponseEntity removeComment(@PathVariable int commentId){
-        ResponseEntity responseEntity = commentService.removeComment(commentId);
+        ResponseEntity responseEntity = communityCommentService.removeComment(commentId);
 
         return responseEntity;
     }

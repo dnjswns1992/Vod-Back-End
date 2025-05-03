@@ -4,10 +4,10 @@ package com.example.StreamCraft.Manager;
 import com.example.StreamCraft.dto.Commuity.PostResponseDto;
 import com.example.StreamCraft.dto.user.UserInfoResponseDto;
 import com.example.StreamCraft.jwtutil.AuthenticatedUserUtil;
-import com.example.StreamCraft.Repository.CommonRepository;
-import com.example.StreamCraft.Repository.PostRepository;
-import com.example.StreamCraft.Table.Common.CommonEntity;
-import com.example.StreamCraft.Table.Post.PostEntity;
+import com.example.StreamCraft.Repository.user.CommonRepository;
+import com.example.StreamCraft.Repository.post.PostRepository;
+import com.example.StreamCraft.Entity.commom.MergedUserEntity;
+import com.example.StreamCraft.Entity.communitypost.PostEntity;
 import com.example.StreamCraft.UserAccount.TransferModelMapper;
 import lombok.RequiredArgsConstructor;
 
@@ -31,11 +31,11 @@ public class PostManager {
         TransferModelMapper<PostResponseDto,PostEntity> mapper = new TransferModelMapper<>();
         PostEntity transfer = mapper.getTransfer(postResponseDto, PostEntity.class);
 
-        CommonEntity commonEntity = commonRepository.findByUsername(postResponseDto.getUsername()).get();
+        MergedUserEntity mergedUserEntity = commonRepository.findByUsername(postResponseDto.getUsername()).get();
 
-        transfer.setUsername(commonEntity.getUsername());
-        transfer.setCommonEntity(commonEntity);
-        transfer.setNickname(commonEntity.getNickname());
+        transfer.setUsername(mergedUserEntity.getUsername());
+        transfer.setMergedUserEntity(mergedUserEntity);
+        transfer.setNickname(mergedUserEntity.getNickname());
 
         postRepository.save(transfer);
 

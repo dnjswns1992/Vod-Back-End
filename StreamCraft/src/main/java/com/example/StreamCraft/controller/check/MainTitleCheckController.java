@@ -1,7 +1,7 @@
 package com.example.StreamCraft.controller.check;
 
-import com.example.StreamCraft.Repository.VideoRepository.UploadMainTitleRepository;
-import com.example.StreamCraft.Table.Video.UploadMainTitleEntity;
+import com.example.StreamCraft.Repository.video.upload.VideoUploadRepository;
+import com.example.StreamCraft.Entity.Video.UploadMainTitleEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,13 +22,13 @@ public class MainTitleCheckController {
      * @param title 사용자가 입력한 영상 제목
      * @return 409 - 중복됨, 200 - 등록 가능
      */
-    private final UploadMainTitleRepository uploadMainTitleRepository;
+    private final VideoUploadRepository videoUploadRepository;
 
 
     @GetMapping("/api/MainTitle/check")
     public ResponseEntity<String> MainTitleCheck(String title) {
 
-        Optional<UploadMainTitleEntity> byTitleContaining = uploadMainTitleRepository.findByTitleContaining(title);
+        Optional<UploadMainTitleEntity> byTitleContaining = videoUploadRepository.findByTitleContaining(title);
 
         if(byTitleContaining.isPresent()) return ResponseEntity.status(409).body("해당 이름이 이미 존재 합니다.");
         else return ResponseEntity.status(200).body("등록가능한 메인 타이틀 입니다.");

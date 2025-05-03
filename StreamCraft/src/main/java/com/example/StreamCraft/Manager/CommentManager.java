@@ -3,12 +3,12 @@ package com.example.StreamCraft.Manager;
 
 import com.example.StreamCraft.dto.Commuity.CommentResponseDto;
 import com.example.StreamCraft.jwtutil.JwtTokenProvider;
-import com.example.StreamCraft.Repository.CommentRepository;
-import com.example.StreamCraft.Repository.CommonRepository;
-import com.example.StreamCraft.Repository.PostRepository;
-import com.example.StreamCraft.Table.Common.CommonEntity;
-import com.example.StreamCraft.Table.Post.CommentEntity;
-import com.example.StreamCraft.Table.Post.PostEntity;
+import com.example.StreamCraft.Repository.post.CommentRepository;
+import com.example.StreamCraft.Repository.user.CommonRepository;
+import com.example.StreamCraft.Repository.post.PostRepository;
+import com.example.StreamCraft.Entity.commom.MergedUserEntity;
+import com.example.StreamCraft.Entity.communitypost.CommentEntity;
+import com.example.StreamCraft.Entity.communitypost.PostEntity;
 import com.example.StreamCraft.UserAccount.TransferModelMapper;
 import io.jsonwebtoken.Claims;
 import lombok.Data;
@@ -51,7 +51,7 @@ public class CommentManager {
 
         // 공통 사용자 정보 조회
 
-        CommonEntity commonEntity = commonRepository.findByUsername(username).get();
+        MergedUserEntity mergedUserEntity = commonRepository.findByUsername(username).get();
 
         // 게시글이 존재하는 경우 댓글 작성 처리
 
@@ -64,8 +64,8 @@ public class CommentManager {
 
             CommentEntity transfer = transferModelMapper.getTransfer(commentResponseDto, CommentEntity.class);
             transfer.setPostEntity(byPostId.get());
-            transfer.setNickname(commonEntity.getNickname());
-            transfer.setUsername(commonEntity.getUsername());
+            transfer.setNickname(mergedUserEntity.getNickname());
+            transfer.setUsername(mergedUserEntity.getUsername());
             transfer.setTitle(byPostId.get().getTitle());
             transfer.setContent(commentResponseDto.getContent());
             transfer.setPostEntity(byPostId.get());

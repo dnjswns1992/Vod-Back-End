@@ -2,7 +2,7 @@ package com.example.StreamCraft.controller.auth;
 
 
 import com.example.StreamCraft.dto.user.UserRegisterDto;
-import com.example.StreamCraft.Service.UserRegisterService.UserService;
+import com.example.StreamCraft.service.UserRegisterService.UserRegisterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
     */
 public class AuthController {
 
-    private final UserService service;
+    private final UserRegisterService service;
     /**
      * 회원가입 처리
      *

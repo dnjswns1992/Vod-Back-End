@@ -1,9 +1,9 @@
 package com.example.StreamCraft.filter;
 
 import com.example.StreamCraft.jwtutil.JwtTokenProvider;
-import com.example.StreamCraft.Repository.UserRepository;
-import com.example.StreamCraft.Service.jwtCheckService.UserDetailsInformation;
-import com.example.StreamCraft.Table.UserAccount.UserEntity;
+import com.example.StreamCraft.Repository.user.UserRepository;
+import com.example.StreamCraft.service.userdetails.UserDetailsInformation;
+import com.example.StreamCraft.Entity.user.UserEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -1,8 +1,8 @@
 package com.example.StreamCraft.controller.user;
 
-import com.example.StreamCraft.Service.UserAccountService.UserAccountService;
-import com.example.StreamCraft.Table.UserAccount.Oauth2Entity;
-import com.example.StreamCraft.Table.UserAccount.UserEntity;
+import com.example.StreamCraft.service.userservice.UserQueryService;
+import com.example.StreamCraft.Entity.user.Oauth2Entity;
+import com.example.StreamCraft.Entity.user.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "http://localhost:5178")
 public class UserAccountController {
 
-    private final UserAccountService accountService;
+    private final UserQueryService accountService;
 
     /* JWT 토큰을 들고 유저의 정보를 가져오는 메서드. */
 
