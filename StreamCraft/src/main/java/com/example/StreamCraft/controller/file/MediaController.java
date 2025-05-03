@@ -61,7 +61,9 @@ public class MediaController {
     // 🔹 애니메이션 에피소드 (단일 ID)
     @GetMapping("/api/animation/episode/{id}")
     public ResponseEntity animationEpisode(@PathVariable int id) {
+
         AnimationEpisodeResponseDto animationEpisodeResponseDto = s3Service.episodeAnimation(id);
+        log.info("📺 반환될 에피소드 수: {}", animationEpisodeResponseDto.getEpisode().size());
         return ResponseEntity.status(200).body(animationEpisodeResponseDto);
     }
 
@@ -89,8 +91,9 @@ public class MediaController {
 
     @GetMapping("/api/animation/episode/role_user/{id}")
     public ResponseEntity animationUserEpisode(@PathVariable int id) {
-        AnimationEpisodeResponseDto animationEpisodeResponseDto = s3Service.episodeUserAnimation(id);
-
+        log.info("🎬 요청된 애니메이션 ID: {}", id);
+        AnimationEpisodeResponseDto animationEpisodeResponseDto = s3Service.episodeAnimation(id);
+        log.info("📺 반환될 에피소드 수: {}", animationEpisodeResponseDto.getEpisode().size());
         return ResponseEntity.status(200).body(animationEpisodeResponseDto);
     }
 

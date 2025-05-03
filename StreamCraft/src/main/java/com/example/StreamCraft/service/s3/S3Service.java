@@ -164,7 +164,7 @@ public class S3Service {
 
 
 
-    public AnimationEpisodeResponseDto episodeUserAnimation(int episodeId){
+    public AnimationEpisodeResponseDto prologAnimation(int episodeId){
 
         List<AnimationEpisodeEntity> episodeEntities =
                 animationEpisodeRepository.findByUploadMainTitleEntityUploadMainTitleEntityIdAndVideoType(episodeId,"prologue");

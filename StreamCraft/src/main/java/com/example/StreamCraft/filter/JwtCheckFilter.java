@@ -69,8 +69,11 @@ public class JwtCheckFilter extends OncePerRequestFilter {
             // Bearer 토큰 추출 및 파싱
 
             String token = authorization.split(" ")[1];
+            log.info("✅ 받은 토큰: {}", token);
             Claims username = JwtTokenProvider.getToken(token);
+            log.info("✅ 파싱된 클레임: {}", username);
             String provider = username.get("provider", String.class);
+            log.info("✅ 로그인 방식: {}", provider);
 
             // 로그인 방식에 따라 사용자 정보 조회
 

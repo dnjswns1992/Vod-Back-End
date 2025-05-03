@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5178")
+@CrossOrigin(origins = "http://localhost:5173")
 public class UserAccountController {
 
     private final UserQueryService accountService;
 
-    /* JWT 토큰을 들고 유저의 정보를 가져오는 메서드. */
+    /* JWT 토큰을 들고 유저의 정보를 가져오는 메서드.
+    유저가 새로고침 및 화면이동할때마다 계속 요청 됨
+    * */
 
     @GetMapping("/authenticated/getUserInfo")
     public ResponseEntity UserAccountGet(@RequestHeader("Authorization")String token){
