@@ -2,7 +2,7 @@ package com.example.StreamCraft.filter;
 
 import com.example.StreamCraft.dto.user.UserInfoResponseDto;
 import com.example.StreamCraft.jwtutil.JwtTokenProvider;
-import com.example.StreamCraft.oauth2.ProviderUser.FormLoginOauthCombine;
+import com.example.StreamCraft.oauth2.provideruser.FormLoginOauthCombine;
 import com.example.StreamCraft.Repository.user.CommonRepository;
 import com.example.StreamCraft.Repository.user.Oauth2UserRepository;
 import com.example.StreamCraft.Repository.user.UserRepository;

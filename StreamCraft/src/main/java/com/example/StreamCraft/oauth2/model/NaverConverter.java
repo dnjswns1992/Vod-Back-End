@@ -1,7 +1,7 @@
-package com.example.StreamCraft.oauth2.Model;
+package com.example.StreamCraft.oauth2.model;
 
-import com.example.StreamCraft.oauth2.ProviderUser.NaverUser;
-import com.example.StreamCraft.oauth2.ProviderUser.ProviderUser;
+import com.example.StreamCraft.oauth2.provideruser.NaverUser;
+import com.example.StreamCraft.oauth2.provideruser.ProviderUser;
 
 /**
  * 네이버 OAuth2 로그인 응답을 ProviderUser 객체로 변환하는 Converter

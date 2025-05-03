@@ -1,7 +1,7 @@
-package com.example.StreamCraft.oauth2.Model;
+package com.example.StreamCraft.oauth2.model;
 
-import com.example.StreamCraft.oauth2.ProviderUser.GoogleUser;
-import com.example.StreamCraft.oauth2.ProviderUser.ProviderUser;
+import com.example.StreamCraft.oauth2.provideruser.GoogleUser;
+import com.example.StreamCraft.oauth2.provideruser.ProviderUser;
 
 /**
  * Google OAuth2 인증 정보를 ProviderUser 객체로 변환하는 Converter 클래스

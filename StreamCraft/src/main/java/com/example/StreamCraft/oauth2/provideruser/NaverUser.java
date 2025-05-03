@@ -1,6 +1,6 @@
-package com.example.StreamCraft.oauth2.ProviderUser;
+package com.example.StreamCraft.oauth2.provideruser;
 
-import com.example.StreamCraft.oauth2.Model.ConverterAttribute;
+import com.example.StreamCraft.oauth2.model.ConverterAttribute;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 

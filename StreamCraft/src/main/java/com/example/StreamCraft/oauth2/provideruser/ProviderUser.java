@@ -1,4 +1,4 @@
-package com.example.StreamCraft.oauth2.ProviderUser;
+package com.example.StreamCraft.oauth2.provideruser;
 
 import org.springframework.security.core.GrantedAuthority;
 

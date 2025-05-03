@@ -1,6 +1,6 @@
 
 
-**🌐 com.example.StreamCraft.oauth2.ProviderUser**
+**🌐 com.example.StreamCraft.oauth2.provideruser**
 
 OAuth2 소셜 로그인(Google, Naver) 사용자 정보를 공통 구조로 감싸기 위한 계층입니다.
 

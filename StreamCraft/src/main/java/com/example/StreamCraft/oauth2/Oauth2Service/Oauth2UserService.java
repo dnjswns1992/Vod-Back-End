@@ -2,9 +2,9 @@ package com.example.StreamCraft.oauth2.Oauth2Service;
 
 import com.example.StreamCraft.dto.user.UserRegisterDto;
 import com.example.StreamCraft.dto.user.UserInfoResponseDto;
-import com.example.StreamCraft.oauth2.Model.ProviderOauth2Converter;
-import com.example.StreamCraft.oauth2.Model.ProviderUserRequest;
-import com.example.StreamCraft.oauth2.ProviderUser.ProviderUser;
+import com.example.StreamCraft.oauth2.model.ProviderOauth2Converter;
+import com.example.StreamCraft.oauth2.model.ProviderUserRequest;
+import com.example.StreamCraft.oauth2.provideruser.ProviderUser;
 import com.example.StreamCraft.Repository.user.CommonRepository;
 import com.example.StreamCraft.Repository.user.Oauth2UserRepository;
 import com.example.StreamCraft.service.userdetails.UserDetailsInformation;

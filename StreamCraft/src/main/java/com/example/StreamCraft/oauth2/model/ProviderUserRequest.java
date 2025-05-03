@@ -1,4 +1,4 @@
-package com.example.StreamCraft.oauth2.Model;
+package com.example.StreamCraft.oauth2.model;
 
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.user.OAuth2User;

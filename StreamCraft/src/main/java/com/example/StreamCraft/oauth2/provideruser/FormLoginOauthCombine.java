@@ -1,4 +1,4 @@
-package com.example.StreamCraft.oauth2.ProviderUser;
+package com.example.StreamCraft.oauth2.provideruser;
 
 import com.example.StreamCraft.dto.user.UserInfoResponseDto;
 import com.example.StreamCraft.Entity.commom.MergedUserEntity;

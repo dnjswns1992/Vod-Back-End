@@ -39,7 +39,7 @@ public class MergedUserEntity {
      private  Oauth2Entity oauth2Entity;
 
 
-    @OneToMany(mappedBy = "commonEntity",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "mergedUserEntity", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<PostEntity> postEntities = new ArrayList<>();
 

@@ -1,6 +1,6 @@
-package com.example.StreamCraft.oauth2.Model;
+package com.example.StreamCraft.oauth2.model;
 
-import com.example.StreamCraft.oauth2.ProviderUser.ProviderUser;
+import com.example.StreamCraft.oauth2.provideruser.ProviderUser;
 
 import java.util.Arrays;
 import java.util.List;

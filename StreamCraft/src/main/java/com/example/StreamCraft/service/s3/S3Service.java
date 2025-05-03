@@ -1,4 +1,4 @@
-package com.example.StreamCraft.service.S3Serivce;
+package com.example.StreamCraft.service.s3;
 import com.example.StreamCraft.config.s3.S3Config;
 import com.example.StreamCraft.dto.media.animation.AnimationEpisodeResponseDto;
 import com.example.StreamCraft.dto.media.movie.MovieEpisodeResponseDto;

@@ -1,4 +1,4 @@
-package com.example.StreamCraft.oauth2.ProviderUser;
+package com.example.StreamCraft.oauth2.provideruser;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;

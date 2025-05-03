@@ -5,7 +5,7 @@ import com.example.StreamCraft.dto.media.movie.MovieEpisodeResponseDto;
 import com.example.StreamCraft.dto.media.upload.UploadMainTitleRequestDto;
 import com.example.StreamCraft.dto.media.upload.VideoMetadataRequestDto;
 import com.example.StreamCraft.Request.CompleteMultipartUploadRequestCustom;
-import com.example.StreamCraft.service.S3Serivce.S3Service;
+import com.example.StreamCraft.service.s3.S3Service;
 import com.example.StreamCraft.Entity.Video.UploadMainTitleEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.example.StreamCraft.oauth2.Model;
+package com.example.StreamCraft.oauth2.model;
 
 import lombok.Builder;
 import lombok.Getter;
