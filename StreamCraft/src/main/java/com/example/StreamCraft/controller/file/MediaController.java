@@ -7,6 +7,8 @@ import com.example.StreamCraft.dto.media.upload.VideoMetadataRequestDto;
 import com.example.StreamCraft.Request.CompleteMultipartUploadRequestCustom;
 import com.example.StreamCraft.service.s3.S3Service;
 import com.example.StreamCraft.Entity.Video.UploadMainTitleEntity;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,7 @@ public class MediaController {
 
     // 🔹 단일 파일 업로드
     @PostMapping("/api/file/upload")
+    @Tag(name = "홈 타이틀 업로드 , description : 관리자가 사용자의 화면에 보여질 영화 제목 혹은 애니메이션을 업로드 ")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
 
         try {
@@ -40,6 +43,7 @@ public class MediaController {
 
     // 🔹 메인 타이틀 업로드
     @PostMapping("/api/mainTitle/upload")
+    @Tag(name = "메인 타이틀 업로드, description = 사용자가 해당 영화 및 애니메이션을 클릭시 영화 정보 및 회차가 뿌려지게 끔 함")
     public ResponseEntity<String> uploadMainTitle(@RequestPart("Image") MultipartFile multipartFile,
                                                   @RequestPart("mainTitleDto") UploadMainTitleRequestDto dto,
                                                   @RequestPart("mainTitleImage") MultipartFile mainTitleImage) {
@@ -51,6 +55,7 @@ public class MediaController {
 
     // 🔹 애니메이션 목록 (메인 화면용)
     @GetMapping("/api/animation/bring")
+    @Tag(name = "애니메이션 가져옴, description : 사용자가 홈 화면에 있을때 애니메이션 목록들을 화면에 뿌림")
     public ResponseEntity animationBring(){
         List<UploadMainTitleEntity> uploadMainTitleEntities = s3Service.animationVideoService();
 
@@ -63,12 +68,12 @@ public class MediaController {
     public ResponseEntity animationEpisode(@PathVariable int id) {
 
         AnimationEpisodeResponseDto animationEpisodeResponseDto = s3Service.episodeAnimation(id);
-        log.info("📺 반환될 에피소드 수: {}", animationEpisodeResponseDto.getEpisode().size());
         return ResponseEntity.status(200).body(animationEpisodeResponseDto);
     }
 
     // 🔹 영화 에피소드 (단일 ID)
     @GetMapping("/api/movie/episode/{id}")
+    @Tag(name = "영화 상세정보, description : 사용자가 애니메이션을 클릭했을 때 클릭한 영화의 해당되는 회차를 가져옴")
     public ResponseEntity movieEpisode(@PathVariable int id){
         MovieEpisodeResponseDto movieEpisodeResponseDto = s3Service.episodeMovie(id);
         return ResponseEntity.status(200).body(movieEpisodeResponseDto);
@@ -76,6 +81,7 @@ public class MediaController {
 
     // 🔹 영화 목록 (메인 화면용)
     @GetMapping("/api/movie/bring")
+    @Tag(name = "영화 가져옴, description : 사용자가 홈 화면에 있을때 영화 목록들을 화면에 뿌림")
     public ResponseEntity movieBring(){
         List<UploadMainTitleEntity> uploadMainTitleMovie = s3Service.movieVideoService();
 
@@ -90,6 +96,7 @@ public class MediaController {
     //유저 권한 일 때
 
     @GetMapping("/api/animation/episode/role_user/{id}")
+    @Tag(name = "애니메이션 상세정보, description : 사용자가 애니메이션을 클릭했을 때 클릭한 애니메이션의 해당되는 회차를 가져옴")
     public ResponseEntity animationUserEpisode(@PathVariable int id) {
         log.info("🎬 요청된 애니메이션 ID: {}", id);
         AnimationEpisodeResponseDto animationEpisodeResponseDto = s3Service.episodeAnimation(id);
@@ -125,6 +132,10 @@ public class MediaController {
 
 
     @GetMapping("/api/s3/create-multipart-upload")
+    @Operation(
+            summary = "S3 멀티파트 업로드 시작",
+            description = "파일 이름을 전달하면, AWS S3와 통신하여 멀티파트 업로드를 위한 uploadId를 발급받습니다."
+    )
     public ResponseEntity<Map<String, String>> createMultipartUpload(@RequestParam String fileName) {
         String uploadId = s3Service.createMultipartUpload(fileName);
         Map<String, String> response = new HashMap<>();
@@ -133,6 +144,10 @@ public class MediaController {
     }
     // 서명된 Url을 주는 api 파트 마다 한번씩 요청 됨
     @GetMapping("/api/s3/generate-presigned-url")
+    @Operation(
+            summary = "S3 업로드용 Presigned URL 생성",
+            description = "파일 조각(partNumber)에 대해 AWS S3에 직접 업로드할 수 있는 URL을 발급합니다."
+    )
     public ResponseEntity<String> generatePresignedUrl(@RequestParam String fileName,
                                                        @RequestParam int partNumber,
                                                        @RequestParam String uploadId) {
@@ -142,6 +157,10 @@ public class MediaController {
 
     //
     @PostMapping("/api/s3/complete-multipart-upload")
+    @Operation(
+            summary = "S3 멀티파트 업로드 완료",
+            description = "업로드된 파일 파트들을 조합해 S3에서 하나의 완성된 파일로 병합합니다."
+    )
     public ResponseEntity<Void> completeMultipartUpload(@RequestBody CompleteMultipartUploadRequestCustom request) {
 
 
@@ -152,6 +171,10 @@ public class MediaController {
 
 
         @PostMapping("/api/file/video/save-metadata")
+        @Operation(
+                summary = "영상 메타데이터 등록",
+                description = "영상 제목, 설명, 회차 번호, 썸네일 이미지, 자막 파일 등을 DB에 저장합니다."
+        )
     public ResponseEntity<String> saveMetadata(@RequestPart("videoDto") VideoMetadataRequestDto videoMetadataRequestDto,
                                                @RequestPart("Image") MultipartFile imageFile,
                                                @RequestPart(value = "subtitle", required = false) MultipartFile subtitleFile) {

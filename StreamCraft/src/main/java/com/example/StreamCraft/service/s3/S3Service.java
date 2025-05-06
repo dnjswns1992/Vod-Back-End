@@ -372,6 +372,17 @@ public class S3Service {
     앞서 클라이언트가 부분적으로 업로드한 각 파트의 정보를 S3에 전달하여 이 파트들을 결합해 최종 파일로 완성하라는 요청을 보내는 역할을 합니다.
      즉, S3에게 "이 파트들을 결합하여 하나의 파일로 만들어라"라는 명령을 내리는 것입니다. */
 
+
+    //{
+//  "fileName": "big_video.mp4",
+//  "uploadId": "abcd1234uploadid5678",
+//  "completedParts": [
+//    { "partNumber": 1, "eTag": "etag1" },
+//    { "partNumber": 2, "eTag": "etag2" },
+//    { "partNumber": 3, "eTag": "etag3" }
+//  ]
+//}
+
     public void completeMultipartUpload(CompleteMultipartUploadRequestCustom customRequest) {
         List<CompletedPart> completedParts = customRequest.getCompletedParts().stream()
                 .map(dto -> {

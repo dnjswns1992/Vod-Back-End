@@ -73,16 +73,19 @@ public class JwtConfig {
                 UsernamePasswordAuthenticationFilter.class
         );
 
-        // 권한/역할 기반 접근 제어
         security.authorizeHttpRequests(request -> request
                 .antMatchers(
                         "/register", "/check-username", "/check-email",
-                        "/api/**", "/login", "/user/**", "/error", "/ws/**"
-                ).permitAll() // 인증 없이 허용
+                        "/api/**", "/login", "/user/**", "/error", "/ws/**",
+                        "/swagger-ui/**",        // ← Swagger UI 허용
+                        "/v3/api-docs/**",       // ← OpenAPI 문서 허용
+                        "/swagger-resources/**", // ← (추가로 필요할 수 있음)
+                        "/webjars/**"            // ← Swagger 관련 리소스
+                ).permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/manager/**").hasAnyRole("ADMIN", "MANAGER")
                 .antMatchers("/authenticated/**").hasAnyRole("ADMIN", "MANAGER", "USER")
-                .anyRequest().authenticated() // 나머지는 인증 필요
+                .anyRequest().authenticated()
         );
 
         // 권한 예외 처리 핸들러

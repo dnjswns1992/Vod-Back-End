@@ -2,6 +2,7 @@ package com.example.StreamCraft.controller.check;
 
 import com.example.StreamCraft.Repository.video.upload.VideoUploadRepository;
 import com.example.StreamCraft.Entity.Video.UploadMainTitleEntity;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,8 @@ public class MainTitleCheckController {
 
 
     @GetMapping("/api/MainTitle/check")
+    @Tag(name = "영상처리 컨트롤러 , description = 관리자가 영상을 올릴 때 중복된 영상을 올리면 에러를 터뜨림")
+
     public ResponseEntity<String> MainTitleCheck(String title) {
 
         Optional<UploadMainTitleEntity> byTitleContaining = videoUploadRepository.findByTitleContaining(title);

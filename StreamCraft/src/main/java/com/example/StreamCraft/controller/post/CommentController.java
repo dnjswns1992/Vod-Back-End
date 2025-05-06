@@ -4,6 +4,7 @@ package com.example.StreamCraft.controller.post;
 import com.example.StreamCraft.dto.Commuity.CommentResponseDto;
 import com.example.StreamCraft.service.PostService.CommunityCommentService;
 import com.example.StreamCraft.Entity.communitypost.CommentEntity;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,7 @@ public class CommentController {
 
 
     @PostMapping("/user/comment/write/{postId}")
+    @Tag(name = "댓글등록 컨트롤러, description : 사용자가 댓글을 등록할 때 사용")
     public ResponseEntity<?> commentWrite(@RequestBody CommentResponseDto commentResponseDto,
                                           @PathVariable int postId,@RequestHeader("Authorization")String token){
 
@@ -43,6 +45,7 @@ public class CommentController {
      */
 
     @GetMapping("/user/comment/bring/{postId}")
+    @Tag(name = "댓글 반환 컨트롤러, description : 게시글에 달린 댓글을 반환 함")
     public ResponseEntity BringComment(@PathVariable int postId){
         List<CommentEntity> commentEntities = communityCommentService.getCommentsByPostId(postId);
         return ResponseEntity.ok(commentEntities);
@@ -53,6 +56,7 @@ public class CommentController {
      */
 
     @GetMapping("/user/comment/remove/{commentId}")
+    @Tag(name = "댓글 삭제 컨트롤러, description : 게시글에 달린 댓글을 삭제함")
     public ResponseEntity removeComment(@PathVariable int commentId){
         ResponseEntity responseEntity = communityCommentService.removeComment(commentId);
 

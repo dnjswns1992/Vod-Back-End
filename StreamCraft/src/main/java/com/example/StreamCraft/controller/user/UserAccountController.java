@@ -3,6 +3,7 @@ package com.example.StreamCraft.controller.user;
 import com.example.StreamCraft.service.userservice.UserQueryService;
 import com.example.StreamCraft.Entity.user.Oauth2Entity;
 import com.example.StreamCraft.Entity.user.UserEntity;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,6 +23,7 @@ public class UserAccountController {
     * */
 
     @GetMapping("/authenticated/getUserInfo")
+    @Tag(name = "jwt 상시 검사 컨트롤러 , description : 매 요청시 마다 jwt 검증")
     public ResponseEntity UserAccountGet(@RequestHeader("Authorization")String token){
         String JwtToken = token.substring(7);
         Oauth2Entity oauth2Entity = accountService.UserInfo(JwtToken);

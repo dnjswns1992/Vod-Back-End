@@ -3,6 +3,7 @@ package com.example.StreamCraft.controller.auth;
 
 import com.example.StreamCraft.dto.user.UserRegisterDto;
 import com.example.StreamCraft.service.UserRegisterService.UserRegisterService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
     /**
     * 회원가입 관련 요청을 처리하는 컨트롤러
     */
+@Tag(name = "회원가입 처리 컨트롤러 , description = 유저가 회원가입 할때 입력한 정보들을 받아 DB에 저장")
 public class AuthController {
 
     private final UserRegisterService service;
